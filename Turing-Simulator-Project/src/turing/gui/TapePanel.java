@@ -25,12 +25,20 @@ public class TapePanel extends JPanel {
 	
 	JTable table;
 	
+	/**
+	 * Creates a new TapePanel.
+	 * @param gui The GUI for the Turing machine simulator.
+	 */
 	public TapePanel(GUI gui)
 	{
 		this.gui = gui;
 		init();
 	}
 	
+	/**
+	 * Initialises the components and layout of this panel.
+	 * @see #initComponents()
+	 */
 	private void init()
 	{	
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -38,6 +46,11 @@ public class TapePanel extends JPanel {
 		initComponents();
 	}
 	
+	/**
+	 * Initialises the components of this panel.
+	 * @see TapeCellEditor
+	 * @see TapeModel
+	 */
 	public void initComponents()
 	{
 		this.setMinimumSize(new Dimension(TAPE_CELLS_TO_DISPLAY*TAPE_FONT.getSize()*2,TAPE_FONT.getSize()*2));

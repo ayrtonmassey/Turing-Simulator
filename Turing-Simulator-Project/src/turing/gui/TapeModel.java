@@ -2,6 +2,8 @@ package turing.gui;
 
 import javax.swing.table.AbstractTableModel;
 
+import turing.Main;
+import turing.TuringException;
 import turing.interfaces.GUI;
 
 public class TapeModel extends AbstractTableModel {
@@ -116,14 +118,12 @@ public class TapeModel extends AbstractTableModel {
 			if(gui.getSimulator().setTapeCellSymbol(cValue, rowIndex, columnIndex))
 			{
 				tapeData[rowIndex][columnIndex] = sValue;
+				fireTableCellUpdated(rowIndex, columnIndex);
 			}
 		}
 		else
 		{
-			System.out.println("INVALID DATA TYPE");
-			//TODO: DO STUFF
+			Main.err.displayError(new TuringException("Invalid Input - The tape may only contain one symbol per cell."));
 		}
-		
-		fireTableCellUpdated(rowIndex, columnIndex);
 	}
 }
