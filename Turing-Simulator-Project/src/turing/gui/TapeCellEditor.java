@@ -1,17 +1,16 @@
-package turing.simulator.project.gui;
+package turing.gui;
 
 import java.awt.Component;
 import java.awt.event.MouseEvent;
 import java.util.EventObject;
 
 import javax.swing.AbstractCellEditor;
-import javax.swing.DefaultCellEditor;
 import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.TableCellEditor;
 
-import turing.simulator.project.interfaces.GUI;
+import turing.interfaces.GUI;
 
 public class TapeCellEditor extends AbstractCellEditor implements TableCellEditor {
 
@@ -19,6 +18,11 @@ public class TapeCellEditor extends AbstractCellEditor implements TableCellEdito
 
 	GUI gui;
 	
+	/**
+	 * Creates a new TapeCellEditor.
+	 * @param textField The JTextField to use as the editor component.
+	 * @param gui The GUI for the Turing machine simulator.
+	 */
 	public TapeCellEditor(JTextField textField,GUI gui)
 	{
 		this.component = textField;

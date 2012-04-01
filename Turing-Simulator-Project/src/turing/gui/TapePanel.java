@@ -1,22 +1,19 @@
-package turing.simulator.project.gui;
+package turing.gui;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
-import javax.swing.DefaultCellEditor;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableModel;
 
-import turing.simulator.project.interfaces.GUI;
+import turing.interfaces.GUI;
 
 public class TapePanel extends JPanel {
 
@@ -26,13 +23,14 @@ public class TapePanel extends JPanel {
 	
 	GUI gui;
 	
+	JTable table;
+	
 	public TapePanel(GUI gui)
 	{
 		this.gui = gui;
 		init();
 	}
 	
-	JTable table;
 	private void init()
 	{	
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -53,7 +51,7 @@ public class TapePanel extends JPanel {
 		
 			JTextField tapeCellEditorField = new JTextField();
 				tapeCellEditorField.setFont(TAPE_FONT);
-				tapeCellEditorField.setHorizontalAlignment(JTextField.CENTER);
+				tapeCellEditorField.setHorizontalAlignment(SwingConstants.CENTER);
 			table.setDefaultEditor(Object.class, new TapeCellEditor(tapeCellEditorField,gui));
 			
 			//Cell Renderer

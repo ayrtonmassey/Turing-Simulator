@@ -1,6 +1,6 @@
-package turing.simulator.project.gui;
-import turing.simulator.project.interfaces.GUI;
-import turing.simulator.project.interfaces.Simulator;
+package turing.gui;
+import turing.interfaces.GUI;
+import turing.interfaces.Simulator;
 
 
 public class TestSimulator implements Simulator {
@@ -10,11 +10,6 @@ public class TestSimulator implements Simulator {
 	public static void main(String[] args)
 	{
 		new TestSimulator();
-	}
-	
-	public TestSimulator()
-	{
-		run();
 	}
 	
 	public void run()
@@ -29,9 +24,21 @@ public class TestSimulator implements Simulator {
 			gui.update();
 		}
 	}
-
+	
+	public TestSimulator()
+	{
+		run();
+	}
+	
 	@Override
 	public int getCurrentState()
+	{
+		//TODO: FILL THIS IN
+		return 0;
+	}
+
+	@Override
+	public int getTapeHeadColumnIndex()
 	{
 		//TODO: FILL THIS IN
 		return 0;
@@ -44,10 +51,18 @@ public class TestSimulator implements Simulator {
 	}
 
 	@Override
-	public int getTapeHeadIndex()
+	public int getTapeHeadRowIndex()
 	{
-		//TODO: FILL THIS IN
 		return 0;
 	}
+
+	@Override
+	public boolean setTapeCellSymbol(char symbol, int rowIndex, int columnIndex)
+	{
+		// TODO Auto-generated method stub
+		return true;
+	}
+
+	
 	
 }

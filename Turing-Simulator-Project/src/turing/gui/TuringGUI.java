@@ -1,14 +1,13 @@
-package turing.simulator.project.gui;
+package turing.gui;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 
-import turing.simulator.project.interfaces.GUI;
-import turing.simulator.project.interfaces.Simulator;
+import turing.interfaces.GUI;
+import turing.interfaces.Simulator;
 
 public class TuringGUI extends JFrame implements GUI {
 
@@ -19,17 +18,23 @@ public class TuringGUI extends JFrame implements GUI {
 	int currentState;
 	int tapeHeadIndex;
 	
+	TapePanel tape;
+	
 	public TuringGUI(Simulator sim)
 	{
 		this.sim = sim;
 		this.currentState = sim.getCurrentState();
-		this.tapeHeadIndex = sim.getTapeHeadIndex();
-		
+		this.tapeHeadIndex = sim.getTapeHeadColumnIndex();
 		
 		init();
 	}
 	
-	TapePanel tape;
+	@Override
+	public Simulator getSimulator()
+	{
+		return sim;
+	}
+	
 	private void init()
 	{
 		initFrame();
@@ -40,13 +45,13 @@ public class TuringGUI extends JFrame implements GUI {
 		this.setVisible(true);
 		this.setBackground(new Color(255,0,0));
 	}
-	
+
 	private void initComponents()
 	{
 		tape = new TapePanel(this);
 		this.add(tape);
 	}
-
+	
 	private void initFrame()
 	{
 		this.setMinimumSize(new Dimension(800,600));
@@ -57,16 +62,10 @@ public class TuringGUI extends JFrame implements GUI {
 		
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
-	
+
 	@Override
 	public void update()
 	{
 		
-	}
-
-	@Override
-	public Simulator getSimulator()
-	{
-		return sim;
 	}
 }
