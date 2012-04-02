@@ -7,15 +7,12 @@ import turing.TuringException;
 import turing.interfaces.GUI;
 
 public class TapeModel extends AbstractTableModel {
-
-	public static final int NUM_COLUMNS = 15,
-							NUM_ROWS = 1;
 	
 	/* 
 	 * Although the tape contains char values, using String allows
 	 * us to use the default cell editor for the JTable
 	 */
-	public String[][] tapeData = new String[NUM_ROWS][NUM_COLUMNS];
+	public String[][] tapeData = new String[GUI.TAPE_ROWS_TO_DISPLAY][GUI.TAPE_COLUMNS_TO_DISPLAY];
 	
 	GUI gui;
 	
@@ -41,7 +38,7 @@ public class TapeModel extends AbstractTableModel {
 	@Override
 	public int getColumnCount()
 	{
-		return NUM_COLUMNS;
+		return GUI.TAPE_COLUMNS_TO_DISPLAY;
 	}
 
 	/**
@@ -57,7 +54,7 @@ public class TapeModel extends AbstractTableModel {
 	@Override
 	public int getRowCount()
 	{
-		return NUM_ROWS;
+		return GUI.TAPE_ROWS_TO_DISPLAY;
 	}
 
 	@Override
