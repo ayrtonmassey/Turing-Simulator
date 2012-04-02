@@ -1,35 +1,53 @@
-package turing.simulator.project.gui;
+package turing.gui;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 
-import turing.simulator.project.interfaces.GUI;
-import turing.simulator.project.interfaces.Simulator;
+import turing.interfaces.GUI;
+import turing.interfaces.Simulator;
 
 public class TuringGUI extends JFrame implements GUI {
 
 	public static final int CELLS_TO_DISPLAY=10;
+
+	public static boolean DEBUG = false;
 	
 	Simulator sim;
 	
 	int currentState;
-	int tapeHeadIndex;
+	int tapeHeadColumnIndex;
 	
+	TapePanel tape;
+	
+	/**
+	 * Creates a new GUI for the Turing machine simulator.
+	 * @param sim
+	 */
 	public TuringGUI(Simulator sim)
 	{
 		this.sim = sim;
 		this.currentState = sim.getCurrentState();
-		this.tapeHeadIndex = sim.getTapeHeadIndex();
-		
+		this.tapeHeadColumnIndex = sim.getTapeHeadColumnIndex();
 		
 		init();
 	}
 	
-	TapePanel tape;
+	@Override
+	public Simulator getSimulator()
+	{
+		return sim;
+	}
+	
+	/**
+	 * Initialises this GUI.
+	 * <p>
+	 * A frame is displayed in the center of the screen, containing the various
+	 * components which make up the GUI.
+	 * @see TapePanel
+	 */
 	private void init()
 	{
 		initFrame();
@@ -40,33 +58,33 @@ public class TuringGUI extends JFrame implements GUI {
 		this.setVisible(true);
 		this.setBackground(new Color(255,0,0));
 	}
-	
+
+	/**
+	 * Initialises the components for this GUI.
+	 */
 	private void initComponents()
 	{
 		tape = new TapePanel(this);
 		this.add(tape);
 	}
-
+	
+	/**
+	 * Initialises the frame which contains the GUI elements. 
+	 */
 	private void initFrame()
 	{
-		this.setMinimumSize(new Dimension(800,600));
-		this.setPreferredSize(new Dimension(800,600));
-		this.setMaximumSize(new Dimension(800,600));
+		this.setMinimumSize(	new Dimension(800,600));
+		this.setPreferredSize(	new Dimension(800,600));
+		this.setMaximumSize(	new Dimension(800,600));
 		
 		this.setLayout(new BoxLayout(this.getContentPane(),BoxLayout.Y_AXIS));
 		
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
-	
+
 	@Override
 	public void update()
 	{
 		
-	}
-
-	@Override
-	public Simulator getSimulator()
-	{
-		return sim;
 	}
 }

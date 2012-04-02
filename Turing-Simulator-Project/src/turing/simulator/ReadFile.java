@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package turing.simulator.project.simulator;
+package turing.simulator;
 
 
 import java.io.File;
@@ -16,7 +16,7 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author Jack & Andrew (though Andrew's the best)
+ * @author Jack & Andrew (though Ayrton's the best)
  */
 public class ReadFile
 {

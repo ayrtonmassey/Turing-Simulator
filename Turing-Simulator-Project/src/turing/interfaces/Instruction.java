@@ -1,4 +1,4 @@
-package turing.simulator.project.interfaces;
+package turing.interfaces;
 
 public interface Instruction {
 	
