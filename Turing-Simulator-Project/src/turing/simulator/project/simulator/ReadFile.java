@@ -27,15 +27,15 @@ public class ReadFile
         getTapeFromFile();
     }
     
-    void getInstructionsFromFile()
+    public List<Character> getInstructionsFromFile()
     {
-       
-     try
+     List<Character> instructions = new ArrayList<Character>(); //Fixed by Andrew, your ArrayList only had scope of those brackets
+     try                                                        //Hence, wouldn't be understood when asked to be returned.
          
         {
             
            Scanner scan = new Scanner(new File("C:\\Users\\Jack\\My Documents\\New Text Document.TXT"));
-           List<Character> instructions = new ArrayList<Character>();
+
             
            instructions.add('a');
            
@@ -47,17 +47,19 @@ public class ReadFile
             Logger.getLogger(ReadFile.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println(ex.getMessage());
         }
-
+     
+        return instructions;
      
     }
     
-    void getTapeFromFile() //will turn into function at later date
+    public List<Character> getTapeFromFile() //will turn into function at later date
     {
+        List<Character> tapeList = new ArrayList<Character>();       
         try
         {
             Scanner scan = new Scanner(new File("")); //enter whatever file we are using here
             String tape = scan.nextLine();
-            List<Character> tapeList = new ArrayList<Character>();            
+     
             
             for (int i = 0; i < tape.length(); i++)
             {
@@ -75,12 +77,15 @@ public class ReadFile
                 }
             }   
             
+
+    
         } catch (FileNotFoundException ex)
         {
             System.out.println(ex.toString());
         }
-        
-        //remember - return the tapeList!    
+                
+        return tapeList;
+
     }
 
     public static void main(String[] args)
