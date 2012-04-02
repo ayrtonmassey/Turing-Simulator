@@ -22,6 +22,10 @@ public class TapeHead extends JComponent {
 	
 	GUI gui;
 	
+	/**
+	 * Creates a new Tape Head.
+	 * @param gui The GUI for the Turing machine simulator.
+	 */
 	public TapeHead(GUI gui)
 	{
 		this.gui=gui;
@@ -40,16 +44,25 @@ public class TapeHead extends JComponent {
 	 */
 	private void init()
 	{
-		this.setMinimumSize(new Dimension(	GUI.TAPE_HEAD_FONT.getSize()*3,(int)(GUI.TAPE_HEAD_FONT.getSize()*2)));
-		this.setPreferredSize(new Dimension(GUI.TAPE_HEAD_FONT.getSize()*3,(int)(GUI.TAPE_HEAD_FONT.getSize()*2)));
-		this.setMaximumSize(new Dimension(	GUI.TAPE_HEAD_FONT.getSize()*3,(int)(GUI.TAPE_HEAD_FONT.getSize()*2)));
+		this.resizeTapeHead();
 		
 		this.setForeground(Color.WHITE);
+	}
+	
+	public void resizeTapeHead()
+	{
+		int w = (GUI.TAPE_HEAD_FONT.getSize()*6/5)+(GUI.TAPE_HEAD_FONT.getSize()*7/16)*(""+gui.getSimulator().getCurrentState()).length()+(GUI.TAPE_HEAD_FONT.getSize()*2/5);
+		int h = (int)(GUI.TAPE_HEAD_FONT.getSize()*2);
+		this.setMinimumSize(new Dimension(w,h));
+		this.setPreferredSize(new Dimension(w,h));
+		this.setMaximumSize(new Dimension(w,h));
 	}
 	
 	@Override
 	public void paintComponent(Graphics g)
 	{
+		resizeTapeHead();
+		
 		//Javadoc requests that if isOpaque is true, the background be filled.
 		//As we are not using super's implementation of paintComponent,
 		//This code fills the background if isOpaque is true.
@@ -84,9 +97,9 @@ public class TapeHead extends JComponent {
 		//Text position:
 		g.setColor(Color.WHITE);
 		g.setFont(GUI.TAPE_HEAD_FONT);
-		g.drawString("S", horizontalCenter-(tapeHeadFontSize/2)-(tapeHeadSubscriptFontSize*stateString.length())/8,this.getHeight()-(tapeHeadFontSize/2));
+		g.drawString("S", (tapeHeadFontSize*2/5),this.getHeight()-(tapeHeadFontSize/2));
 		g.setFont(TAPE_HEAD_SUBSCRIPT_FONT);
-		g.drawString(stateString, horizontalCenter+(tapeHeadFontSize/5)-(tapeHeadSubscriptFontSize*stateString.length())/8, this.getHeight()-(tapeHeadSubscriptFontSize/2));
+		g.drawString(stateString, (tapeHeadFontSize*6/5), this.getHeight()-(tapeHeadSubscriptFontSize/2));
 	}
 	
 	/**
