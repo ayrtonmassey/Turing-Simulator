@@ -56,11 +56,12 @@ public class TapeHead extends JComponent {
 		this.setMinimumSize(new Dimension(w,h));
 		this.setPreferredSize(new Dimension(w,h));
 		this.setMaximumSize(new Dimension(w,h));
+		this.setSize(new Dimension(w,h));
 	}
 	
 	@Override
 	public void paintComponent(Graphics g)
-	{
+	{	
 		resizeTapeHead();
 		
 		//Javadoc requests that if isOpaque is true, the background be filled.

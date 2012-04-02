@@ -7,6 +7,8 @@ public class TestSimulator implements Simulator {
 
 	static GUI gui;
 	
+	private int currentState = 0;
+	
 	public static void main(String[] args)
 	{
 		new TestSimulator();
@@ -20,7 +22,7 @@ public class TestSimulator implements Simulator {
 		{
 			//find instruction
 			//execute instruction
-		
+			currentState=1000;
 			gui.update();
 		}
 	}
@@ -34,7 +36,7 @@ public class TestSimulator implements Simulator {
 	public int getCurrentState()
 	{
 		//TODO: FILL THIS IN
-		return 0;
+		return currentState;
 	}
 
 	@Override
