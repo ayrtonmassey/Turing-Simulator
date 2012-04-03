@@ -77,6 +77,15 @@ public class InstructionPanel extends JComponent {
 		}
 	}
 	
+	/**
+	 * Updates the instruction display.
+	 */
+	public void update()
+	{
+		history.add(gui.getSimulator().getCurrentInstruction());
+		repaint();
+	}
+	
 	int yOffset=GUI.INSTRUCTION_FONT.getSize()/2;
 	int lineOffset=GUI.INSTRUCTION_FONT.getSize()/8;
 	

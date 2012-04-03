@@ -88,7 +88,8 @@ public class TuringGUI extends JFrame implements GUI {
 	@Override
 	public void update()
 	{
-		
+		tape.update();
+		instruction.update();
 	}
 
 	@Override

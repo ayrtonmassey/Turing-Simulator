@@ -1,5 +1,7 @@
 package turing.interfaces;
 
+import java.util.List;
+
 public interface Simulator {
 
 	/**
@@ -39,4 +41,29 @@ public interface Simulator {
 	 * @return <code>true</code> if the cell was written to successfully, <code>false</code> if not.
 	 */
 	public boolean setTapeCellSymbol(char symbol,int rowIndex,int columnIndex);
+	
+	/**
+	 * Returns the contents of the tape between beginIndex and endIndex inclusive.
+	 * <p>
+	 * The size of the returned list should be (beginIndex-endIndex)+1, as 0 is an index in the list.
+	 * <p>
+	 * As the tape is of infinite length, this method may request cells which do not exist
+	 * in the data structure which represents the tape. This method should return blanks
+	 * for any cells which do not exist.
+	 * <p>
+	 * For now, ignore the row parameters - these have been added to make way for a two-dimensional tape later.
+	 * @param rowBeginIndex The first row of the section of the tape to return.
+	 * @param rowEndIndex The last row of the section of the tape to return.
+	 * @param colBeginIndex The first column of the section of the tape to return.
+	 * @param colEndIndex The last column of the section of the tape to return.
+	 * @return A List&lt;Character&gt; containing the cells on the tape between
+	 * <code>beginIndex</code> and <code>endIndex</code>
+	 */
+	public List<Character> getTapeContents(int rowBeginIndex,int rowEndIndex,int colBeginIndex,int colEndIndex);
+
+	/**
+	 * Returns the {@link Instruction} currently being executed by the Turing simulator.
+	 * @return the {@link Instruction} currently being executed by the Turing simulator.
+	 */
+	public Instruction getCurrentInstruction();
 }

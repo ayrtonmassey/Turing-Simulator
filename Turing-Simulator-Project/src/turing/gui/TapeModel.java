@@ -103,7 +103,17 @@ public class TapeModel extends AbstractTableModel {
 	@Override
 	public void setValueAt(Object aValue, int rowIndex, int columnIndex)
 	{
-		String sValue = (String)aValue;
+		String sValue="ERROR";
+		
+		if(aValue instanceof String)
+		{
+			sValue = (String)aValue;
+		}
+		else if(aValue instanceof Character)
+		{
+			sValue = ((Character)aValue).toString();
+		}
+		
 		if(sValue.equals(""))
 		{
 			sValue="_";
@@ -111,8 +121,9 @@ public class TapeModel extends AbstractTableModel {
 		
 		if(sValue.length()==1)
 		{
+			int tapeHeadColumnIndex = gui.getSimulator().getTapeHeadColumnIndex();
 			char cValue = sValue.charAt(0);
-			if(gui.getSimulator().setTapeCellSymbol(cValue, rowIndex, columnIndex))
+			if(gui.getSimulator().setTapeCellSymbol(cValue, rowIndex, tapeHeadColumnIndex+columnIndex-(int)Math.ceil(GUI.TAPE_COLUMNS_TO_DISPLAY/2)))
 			{
 				tapeData[rowIndex][columnIndex] = sValue;
 				fireTableCellUpdated(rowIndex, columnIndex);

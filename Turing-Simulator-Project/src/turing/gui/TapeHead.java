@@ -21,14 +21,16 @@ public class TapeHead extends JComponent {
 	Polygon headArrow;
 	
 	GUI gui;
+	TapePanel parent;
 	
 	/**
 	 * Creates a new Tape Head.
 	 * @param gui The GUI for the Turing machine simulator.
 	 */
-	public TapeHead(GUI gui)
+	public TapeHead(GUI gui,TapePanel parent)
 	{
 		this.gui=gui;
+		this.parent=parent;
 		
 		init();
 		
@@ -57,6 +59,7 @@ public class TapeHead extends JComponent {
 		this.setPreferredSize(new Dimension(w,h));
 		this.setMaximumSize(new Dimension(w,h));
 		this.setSize(new Dimension(w,h));
+		this.setBounds((parent.getWidth()/2)-(this.getWidth()/2), this.getY(), this.getWidth(), this.getHeight());
 	}
 	
 	@Override

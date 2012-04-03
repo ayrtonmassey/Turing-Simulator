@@ -3,6 +3,7 @@ package turing.gui;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -22,7 +23,7 @@ public class TapePanel extends JPanel {
 	GUI gui;
 	
 	JTable table;
-	
+	TapeHead tapeHead;
 	/**
 	 * Creates a new TapePanel.
 	 * @param gui The GUI for the Turing machine simulator.
@@ -102,12 +103,45 @@ public class TapePanel extends JPanel {
 		//*/
 		
 		//Tape Head
-		TapeHead tapeHead = new TapeHead(gui);
+		tapeHead = new TapeHead(gui,this);
 			tapeHead.setAlignmentX(0.45f); //I don't know why I had to do it like this, but the label is slightly off-centre without it.
 			
 			
 		this.add(table.getTableHeader());
 		this.add(table);
 		this.add(tapeHead);
+	}
+	
+	/**
+	 * Updates the tape display.
+	 */
+	public void update()
+	{
+		updateTape();
+		updateTapeHead();
+	}
+	
+	/**
+	 * Updates the contents of the tape.
+	 */
+	private void updateTape()
+	{
+		int tapeHeadColumnIndex = gui.getSimulator().getTapeHeadColumnIndex();
+		int beginIndex = tapeHeadColumnIndex-(int)Math.floor((double)GUI.TAPE_COLUMNS_TO_DISPLAY/(double)2);
+		int endIndex = tapeHeadColumnIndex+(int)Math.ceil((double)GUI.TAPE_COLUMNS_TO_DISPLAY/(double)2)-1;
+		List<Character> tape = gui.getSimulator().getTapeContents(0,0,beginIndex, endIndex);
+		
+		for(int i=0;i<tape.size();i++)
+		{
+			table.setValueAt(tape.get(i), 0, i);
+		}
+	}
+
+	/**
+	 * Updates the tape head's display.
+	 */
+	private void updateTapeHead()
+	{
+		tapeHead.update();
 	}
 }
