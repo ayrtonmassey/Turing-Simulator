@@ -42,7 +42,7 @@ public class TapePanel extends JPanel {
 		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 		initComponents();
 		
-		if(TuringGUI.DEBUG)
+		if(gui.debugMode())
 		{
 			this.setBackground(Color.RED);
 		}
@@ -55,9 +55,12 @@ public class TapePanel extends JPanel {
 	 */
 	private void initComponents()
 	{
-		this.setMinimumSize(new Dimension(	TAPE_CELLS_TO_DISPLAY*GUI.TAPE_FONT.getSize()*2, GUI.TAPE_FONT.getSize()*2+GUI.TAPE_HEAD_FONT.getSize()*2));
-		this.setPreferredSize(new Dimension(TAPE_CELLS_TO_DISPLAY*GUI.TAPE_FONT.getSize()*2, GUI.TAPE_FONT.getSize()*2+GUI.TAPE_HEAD_FONT.getSize()*2));
-		this.setMaximumSize(new Dimension(	TAPE_CELLS_TO_DISPLAY*GUI.TAPE_FONT.getSize()*2, GUI.TAPE_FONT.getSize()*2+GUI.TAPE_HEAD_FONT.getSize()*2));
+		int w = TAPE_CELLS_TO_DISPLAY*GUI.TAPE_FONT.getSize()*2;
+		int h = GUI.TAPE_FONT.getSize()*2+GUI.TAPE_HEAD_FONT.getSize()*2;
+		
+		this.setMinimumSize(new Dimension(	w,h));
+		this.setPreferredSize(new Dimension(w,h));
+		this.setMaximumSize(new Dimension(	w,h));
 		
 		///*
 		table = new JTable(new TapeModel(gui));
@@ -86,7 +89,7 @@ public class TapePanel extends JPanel {
 				table.getColumnModel().getColumn(i).setMaxWidth(GUI.TAPE_FONT.getSize()*2);
 			}
 			
-			table.setBorder(BorderFactory.createLineBorder(new Color(128,169,255), 1));
+			table.setBorder(BorderFactory.createLineBorder(new Color(0,0,0), 1));
 			
 				//Selection Style
 			

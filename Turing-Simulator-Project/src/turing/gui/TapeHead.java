@@ -32,7 +32,7 @@ public class TapeHead extends JComponent {
 		
 		init();
 		
-		if(TuringGUI.DEBUG)
+		if(gui.debugMode())
 		{
 			this.setBackground(Color.GREEN);
 			this.setOpaque(true);

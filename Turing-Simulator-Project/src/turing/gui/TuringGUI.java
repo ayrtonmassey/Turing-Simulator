@@ -13,7 +13,7 @@ public class TuringGUI extends JFrame implements GUI {
 
 	public static final int CELLS_TO_DISPLAY=10;
 
-	public static boolean DEBUG = false;
+	private boolean DEBUG = false;
 	
 	Simulator sim;
 	
@@ -21,6 +21,7 @@ public class TuringGUI extends JFrame implements GUI {
 	int tapeHeadColumnIndex;
 	
 	TapePanel tape;
+	InstructionPanel instruction;
 	
 	/**
 	 * Creates a new GUI for the Turing machine simulator.
@@ -64,6 +65,8 @@ public class TuringGUI extends JFrame implements GUI {
 	 */
 	private void initComponents()
 	{
+		instruction = new InstructionPanel(this);
+		this.add(instruction);
 		tape = new TapePanel(this);
 		this.add(tape);
 	}
@@ -86,5 +89,11 @@ public class TuringGUI extends JFrame implements GUI {
 	public void update()
 	{
 		
+	}
+
+	@Override
+	public boolean debugMode()
+	{
+		return DEBUG;
 	}
 }

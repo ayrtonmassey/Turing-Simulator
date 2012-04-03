@@ -18,13 +18,13 @@ public class TestSimulator implements Simulator {
 	{
 		gui = new TuringGUI(this);
 		
-		while(true)
+		/*while(true)
 		{
 			//find instruction
 			//execute instruction
-			currentState=1000;
+			currentState=1;
 			gui.update();
-		}
+		}*/
 	}
 	
 	public TestSimulator()
