@@ -1,9 +1,12 @@
 package turing.gui;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.MouseInfo;
 import java.awt.Polygon;
 import java.util.List;
@@ -43,7 +46,7 @@ public class TapePanel extends JPanel {
 	 */
 	private void init()
 	{	
-		this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		this.setLayout(new GridBagLayout());
 		initComponents();
 		
 		if(gui.debugMode())
@@ -73,14 +76,7 @@ public class TapePanel extends JPanel {
 	 * @see TapeModel
 	 */
 	private void initComponents()
-	{
-		int w = TAPE_CELLS_TO_DISPLAY*GUI.TAPE_FONT.getSize()*2;
-		int h = GUI.TAPE_FONT.getSize()*2+GUI.TAPE_HEAD_FONT.getSize()*3;
-		
-		this.setMinimumSize(new Dimension(	w,h));
-		this.setPreferredSize(new Dimension(w,h));
-		this.setMaximumSize(new Dimension(	w,h));
-		
+	{	
 		///*
 		table = new JTable(new TapeModel(gui,this));
 		
@@ -118,10 +114,21 @@ public class TapePanel extends JPanel {
 			//Miscellaneous
 				
 			table.setSurrendersFocusOnKeystroke(true);
-		//*/
 			
-		this.add(table.getTableHeader());
-		this.add(table);
+			table.setMaximumSize(new Dimension(GUI.TAPE_CELL_WIDTH*GUI.TAPE_COLUMNS_TO_DISPLAY,GUI.TAPE_CELL_HEIGHT*GUI.TAPE_ROWS_TO_DISPLAY));
+		//*/
+		
+		GridBagConstraints gc = new GridBagConstraints();
+			gc.fill=GridBagConstraints.NONE;
+			gc.gridx=1;
+			gc.gridy=1;
+			gc.gridwidth=1;
+			gc.gridheight=1;
+			gc.weightx=0;
+			gc.weighty=0;
+			gc.anchor=GridBagConstraints.CENTER;
+		//this.add(table.getTableHeader(),gc);
+		this.add(table,gc);
 		//this.add(tapeHead);
 	}
 	

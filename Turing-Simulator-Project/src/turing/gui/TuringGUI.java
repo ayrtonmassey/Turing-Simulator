@@ -2,6 +2,8 @@ package turing.gui;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
@@ -65,10 +67,30 @@ public class TuringGUI extends JFrame implements GUI {
 	 */
 	private void initComponents()
 	{
+		this.setLayout(new GridBagLayout());
+		GridBagConstraints gc = new GridBagConstraints();
+		
 		instruction = new InstructionPanel(this);
-		this.add(instruction);
+			gc.fill=GridBagConstraints.NONE;
+			gc.gridx=4;
+			gc.gridy=0;
+			gc.gridwidth=1;
+			gc.gridheight=3;
+			gc.weightx=0;
+			gc.weighty=1;
+			gc.anchor=GridBagConstraints.NORTH;
+		this.add(instruction,gc);
+		
 		tape = new TapePanel(this);
-		this.add(tape);
+			gc.fill=GridBagConstraints.BOTH;
+			gc.gridx=0;
+			gc.gridy=0;
+			gc.gridwidth=3;
+			gc.gridheight=3;
+			gc.weightx=1;
+			gc.weighty=1;
+			gc.anchor=GridBagConstraints.CENTER;
+		this.add(tape,gc);
 	}
 	
 	/**

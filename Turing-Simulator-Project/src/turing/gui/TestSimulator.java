@@ -109,10 +109,10 @@ public class TestSimulator implements Simulator {
 		tapeHeadColumnIndex = 7;
 		
 		instructionSet.add(new TuringInstruction(0,'_',0,'_',Instruction.MOVE_RIGHT));
-		instructionSet.add(new TuringInstruction(0,'#',100000,'#',Instruction.MOVE_LEFT));
+		instructionSet.add(new TuringInstruction(0,'#',2147483647,'#',Instruction.MOVE_LEFT));
 		
-		instructionSet.add(new TuringInstruction(100000,'_',100000,'_',Instruction.MOVE_LEFT));
-		instructionSet.add(new TuringInstruction(100000,'#',0,'#',Instruction.MOVE_RIGHT));
+		instructionSet.add(new TuringInstruction(2147483647,'_',2147483647,'_',Instruction.MOVE_LEFT));
+		instructionSet.add(new TuringInstruction(2147483647,'#',0,'#',Instruction.MOVE_RIGHT));
 	}
 	
 	public TestSimulator()

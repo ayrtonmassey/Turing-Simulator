@@ -5,6 +5,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -83,6 +85,10 @@ public class InstructionPanel extends JComponent {
 	public void update()
 	{
 		history.add(gui.getSimulator().getCurrentInstruction());
+		if(history.size()>GUI.INSTRUCTION_HISTORY_LIMIT)
+		{
+			history.remove(0);
+		}
 		repaint();
 	}
 	
