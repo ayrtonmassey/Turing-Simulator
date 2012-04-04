@@ -6,6 +6,7 @@ import java.util.EventObject;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.JComponent;
+import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.TableCellEditor;
@@ -17,23 +18,31 @@ public class TapeCellEditor extends AbstractCellEditor implements TableCellEdito
 	public static final int CLICK_COUNT_TO_START = 2;
 
 	GUI gui;
+	TapePanel parent;
 	
 	/**
 	 * Creates a new TapeCellEditor.
 	 * @param textField The JTextField to use as the editor component.
 	 * @param gui The GUI for the Turing machine simulator.
 	 */
-	public TapeCellEditor(JTextField textField,GUI gui)
+	public TapeCellEditor(GUI gui,TapePanel parent,JTextField textField)
 	{
 		this.component = textField;
+		this.parent=parent;
 		this.gui=gui;
 	}
 
 	JComponent component;
+	
+	int row;
+	int column;
 
 	@Override
 	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column)
 	{
+		this.row=row;
+		this.column=column;
+		
 		String sValue = (String)value;
 		
 		if(sValue.equals("_"))
@@ -51,15 +60,26 @@ public class TapeCellEditor extends AbstractCellEditor implements TableCellEdito
 	@Override
 	public boolean stopCellEditing()
 	{
-		if(((JTextField)component).getText().length()>1)
+		String sValue = ((JTextField)component).getText();
+		if(sValue.length()<=1)
 		{
-			return false;
+			char cValue;
+			if(sValue.length()==1)
+			{
+				cValue = sValue.charAt(0);
+			}
+			else
+			{
+				cValue='_';
+			}
+			
+			if(gui.getSimulator().setTapeCellSymbol(cValue, row, parent.getTapeBeginIndex()+column))
+			{
+				fireEditingStopped();
+				return true;
+			}
 		}
-		else
-		{
-			fireEditingStopped();
-			return true;
-		}
+		return false;
 	}
 	
 	@Override

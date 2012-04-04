@@ -91,8 +91,10 @@ public class TestSimulator implements Simulator {
 		tape.add('1');//
 		tape.add('2');
 		tape.add('3');//
-		tape.add('4');
-		tape.add('#');//
+		tape.add('#');
+		tape.add('_');//
+		tape.add('_');
+		tape.add('_');//
 		tape.add('_');
 		tape.add('_');//
 		tape.add('_');
@@ -100,8 +102,6 @@ public class TestSimulator implements Simulator {
 		tape.add('_');
 		tape.add('_');//
 		tape.add('#');
-		tape.add('3');//
-		tape.add('4');
 		tape.add('5');//
 		
 		System.out.println(tape);
@@ -109,10 +109,10 @@ public class TestSimulator implements Simulator {
 		tapeHeadColumnIndex = 7;
 		
 		instructionSet.add(new TuringInstruction(0,'_',0,'_',Instruction.MOVE_RIGHT));
-		instructionSet.add(new TuringInstruction(0,'#',1,'#',Instruction.MOVE_LEFT));
+		instructionSet.add(new TuringInstruction(0,'#',100000,'#',Instruction.MOVE_LEFT));
 		
-		instructionSet.add(new TuringInstruction(1,'_',1,'_',Instruction.MOVE_LEFT));
-		instructionSet.add(new TuringInstruction(1,'#',0,'#',Instruction.MOVE_RIGHT));
+		instructionSet.add(new TuringInstruction(100000,'_',100000,'_',Instruction.MOVE_LEFT));
+		instructionSet.add(new TuringInstruction(100000,'#',0,'#',Instruction.MOVE_RIGHT));
 	}
 	
 	public TestSimulator()

@@ -1,5 +1,6 @@
 package turing.interfaces;
 
+import java.awt.Color;
 import java.awt.Font;
 
 
@@ -12,6 +13,12 @@ public interface GUI {
 	public static final Font TAPE_FONT=new Font("Arial",Font.BOLD,24),
 								TAPE_HEAD_FONT=new Font("Arial",Font.BOLD,16),
 								INSTRUCTION_FONT=new Font("Arial",Font.BOLD,24);
+	
+	public static final int TAPE_CELL_WIDTH=48,TAPE_CELL_HEIGHT=48;
+
+	public static final Color TAPE_HEAD_COLOR = Color.BLACK;
+
+	public static final Color TAPE_HEAD_FONT_COLOR = Color.WHITE;
 	
 	/**
 	 * Updates the GUI to the current state of the Turing machine.

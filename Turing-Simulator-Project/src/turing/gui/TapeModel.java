@@ -1,5 +1,6 @@
 package turing.gui;
 
+import javax.swing.JPanel;
 import javax.swing.table.AbstractTableModel;
 
 import turing.Main;
@@ -15,13 +16,15 @@ public class TapeModel extends AbstractTableModel {
 	public String[][] tapeData = new String[GUI.TAPE_ROWS_TO_DISPLAY][GUI.TAPE_COLUMNS_TO_DISPLAY];
 	
 	GUI gui;
+	JPanel parent;
 	
 	/**
 	  * @param gui The GUI for the Turing Simulator.
 	  */
-	TapeModel(GUI gui)
+	TapeModel(GUI gui,JPanel parent)
 	{
 		this.gui = gui;
+		this.parent = parent;
 		
 		initTapeData();
 	}
@@ -121,17 +124,14 @@ public class TapeModel extends AbstractTableModel {
 		
 		if(sValue.length()==1)
 		{
-			int tapeHeadColumnIndex = gui.getSimulator().getTapeHeadColumnIndex();
-			char cValue = sValue.charAt(0);
-			if(gui.getSimulator().setTapeCellSymbol(cValue, rowIndex, tapeHeadColumnIndex+columnIndex-(int)Math.ceil(GUI.TAPE_COLUMNS_TO_DISPLAY/2)))
-			{
-				tapeData[rowIndex][columnIndex] = sValue;
-				fireTableCellUpdated(rowIndex, columnIndex);
-			}
+			tapeData[rowIndex][columnIndex] = sValue;
+			fireTableCellUpdated(rowIndex, columnIndex);
 		}
 		else
 		{
 			Main.err.displayError(new TuringException("Invalid Input - The tape may only contain one symbol per cell."));
 		}
+		
+		parent.repaint();
 	}
 }
