@@ -5,14 +5,17 @@
 
 package turing.simulator;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import turing.TuringException;
+import turing.interfaces.Simulator;
 
 /**
  *
  * @author Vickers Family
  */
-public class carryOutInstructions {
+public class carryOutInstructions implements Simulator {
        int currentTapePosition = 0;
    
            public void executeInstructions() {
@@ -72,6 +75,60 @@ public class carryOutInstructions {
         for (int i = 0; i< tape.length; i++) {
             System.out.println("new Tape:" + tape[i]);
         }
+    }
+
+      
+
+    @Override
+    public int getCurrentState() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean isTapeEditable() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public int getTapeHeadColumnIndex() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public int getTapeHeadRowIndex() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean setTapeCellSymbol(char symbol, int rowIndex, int columnIndex) throws TuringException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public List<List<Character>> getTapeContents(int rowBeginIndex, int rowEndIndex, int colBeginIndex, int colEndIndex) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public turing.interfaces.Instruction getCurrentInstruction() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public int getTapeOriginX() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public int getTapeOriginY() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void openFile(File f) throws TuringException {
+
+
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }
 

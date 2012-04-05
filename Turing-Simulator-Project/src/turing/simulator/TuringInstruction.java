@@ -1,4 +1,4 @@
-package turing.gui;
+package turing.simulator;
 
 import turing.interfaces.Instruction;
 
@@ -10,7 +10,7 @@ public class TuringInstruction implements Instruction {
 	private char outputSymbol;
 	private int direction;
 
-	TuringInstruction(int currentState,char inputSymbol,int nextState,char outputSymbol,int direction)
+	public TuringInstruction(int currentState,char inputSymbol,int nextState,char outputSymbol,int direction)
 	{
 		this.currentState=currentState;
 		this.inputSymbol=inputSymbol;

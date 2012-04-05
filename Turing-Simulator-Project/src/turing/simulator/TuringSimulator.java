@@ -1,19 +1,21 @@
-package turing.gui;
+package turing.simulator;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
 import turing.Main;
 import turing.TuringException;
-import turing.simulator.TuringInstruction;
+import turing.gui.TuringGUI;
 import turing.interfaces.GUI;
 import turing.interfaces.Instruction;
 import turing.interfaces.Simulator;
 
 
-public class TestSimulator implements Simulator {
+public class TuringSimulator implements Simulator {
 
 	GUI gui;
 	
@@ -31,7 +33,7 @@ public class TestSimulator implements Simulator {
 	
 	public static void main(String[] args)
 	{
-		new TestSimulator();
+		new TuringSimulator();
 	}
 	
 	boolean paused=false;
@@ -215,7 +217,7 @@ public class TestSimulator implements Simulator {
 		}
 	}
 	
-	public TestSimulator()
+	public TuringSimulator()
 	{
 		run();
 	}
