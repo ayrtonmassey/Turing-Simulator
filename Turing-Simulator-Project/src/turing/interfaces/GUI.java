@@ -7,7 +7,7 @@ import java.awt.Font;
 public interface GUI {
 
 	public static final int TAPE_COLUMNS_TO_DISPLAY=11,
-							TAPE_ROWS_TO_DISPLAY=1,
+							TAPE_ROWS_TO_DISPLAY=8,
 							INSTRUCTIONS_TO_DISPLAY=3;
 	
 	public static final Font TAPE_FONT=new Font("Arial",Font.BOLD,24), //Any size works nicely. Tape will resize based on font size.

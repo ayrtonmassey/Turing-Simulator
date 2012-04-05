@@ -84,12 +84,16 @@ public class InstructionPanel extends JComponent {
 	 */
 	public void update()
 	{
-		history.add(gui.getSimulator().getCurrentInstruction());
-		if(history.size()>GUI.INSTRUCTION_HISTORY_LIMIT)
+		Instruction i = gui.getSimulator().getCurrentInstruction();
+		if(i!=null)
 		{
-			history.remove(0);
+			history.add(i);
+			if(history.size()>GUI.INSTRUCTION_HISTORY_LIMIT)
+			{
+				history.remove(0);
+			}
+			repaint();
 		}
-		repaint();
 	}
 	
 	int yOffset=GUI.INSTRUCTION_FONT.getSize()/2;

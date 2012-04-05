@@ -27,6 +27,10 @@ public class TapePanel extends JPanel {
 
 	public static final int TAPE_CELLS_TO_DISPLAY=10;
 	
+	private int ROWS_TO_DISPLAY;
+
+	private int COLUMNS_TO_DISPLAY;
+	
 	GUI gui;
 	
 	JTable table;
@@ -34,9 +38,25 @@ public class TapePanel extends JPanel {
 	 * Creates a new TapePanel.
 	 * @param gui The GUI for the Turing machine simulator.
 	 */
-	public TapePanel(GUI gui)
+	
+	public TapePanel(GUI gui,int rows,int columns)
+	{
+		this(gui,rows,columns,0,0); //Initialise new tape panel starting at (0,0)
+	}
+	
+	public TapePanel(GUI gui,int rows,int columns, int beginRowIndex, int beginColumnIndex)
 	{
 		this.gui = gui;
+		
+		this.ROWS_TO_DISPLAY=rows;
+		this.COLUMNS_TO_DISPLAY=columns;
+		
+		this.tapeBeginRowIndex=beginRowIndex;
+		this.tapeEndColumnIndex=tapeBeginColumnIndex+ROWS_TO_DISPLAY-1;
+		
+		this.tapeBeginColumnIndex=beginColumnIndex;
+		this.tapeEndColumnIndex=tapeBeginColumnIndex+COLUMNS_TO_DISPLAY-1;
+		
 		init();
 	}
 	
@@ -55,20 +75,31 @@ public class TapePanel extends JPanel {
 		}
 	}
 	
-	private int tapeBeginIndex = 4;
-	private int tapeEndIndex = tapeBeginIndex+GUI.TAPE_COLUMNS_TO_DISPLAY-1;
+	private int tapeBeginColumnIndex = 4;
+	private int tapeEndColumnIndex = tapeBeginColumnIndex+GUI.TAPE_COLUMNS_TO_DISPLAY-1;
+
+	private int tapeBeginRowIndex=0;
+	private int tapeEndRowIndex=tapeBeginRowIndex+GUI.TAPE_ROWS_TO_DISPLAY-1;
 	
-	public int getTapeBeginIndex()
+	public int getTapeBeginColumnIndex()
 	{
-		return tapeBeginIndex;
+		return tapeBeginColumnIndex;
 	}
 
-	public int getTapeEndIndex()
+	public int getTapeEndColumnIndex()
 	{
-		return tapeEndIndex;
+		return tapeEndColumnIndex;
 	}
-
 	
+	public int getTapeBeginRowIndex()
+	{
+		return tapeBeginRowIndex;
+	}
+	
+	public int getTapeEndRowIndex()
+	{
+		return tapeEndRowIndex;
+	}
 	
 	/**
 	 * Initialises the components of this panel.
@@ -138,7 +169,6 @@ public class TapePanel extends JPanel {
 	public void update()
 	{
 		updateTape();
-		//updateTapeHead();
 	}
 	
 	/**
@@ -146,14 +176,21 @@ public class TapePanel extends JPanel {
 	 */
 	private void updateTape()
 	{
-		int tapeHeadColumnIndex = gui.getSimulator().getTapeHeadColumnIndex();
-		int beginIndex = tapeBeginIndex;
-		int endIndex = tapeEndIndex;
-		List<Character> tape = gui.getSimulator().getTapeContents(0,0,beginIndex, endIndex);
+		int ox = gui.getSimulator().getTapeOriginX();
+		int oy = gui.getSimulator().getTapeOriginY();
+		int beginRowIndex = tapeBeginRowIndex+oy;
+		int endRowIndex = tapeEndRowIndex+oy;
+		int beginColumnIndex = tapeBeginColumnIndex+ox;
+		int endColumnIndex = tapeEndColumnIndex+ox;
 		
-		for(int i=0;i<tape.size();i++)
+		List<List<Character>> tape = gui.getSimulator().getTapeContents(beginRowIndex, endRowIndex, beginColumnIndex, endColumnIndex);
+		
+		for(int y=0;y<tape.size();y++)
 		{
-			table.setValueAt(tape.get(i), 0, i);
+			for(int x=0;x<tape.get(y).size();x++)
+			{
+				table.setValueAt(tape.get(y).get(x), y, x);
+			}
 		}
 	}
 	
@@ -181,61 +218,82 @@ public class TapePanel extends JPanel {
 		
 		boolean drawState = true;
 		
-		int tableTapeHeadColIndex = gui.getSimulator().getTapeHeadColumnIndex()-tapeBeginIndex;
-		TableColumn tapeHeadColumn = table.getColumnModel().getColumn(tableTapeHeadColIndex);
+		int tableTapeHeadColIndex = gui.getSimulator().getTapeHeadColumnIndex()-tapeBeginColumnIndex;
+		int tableTapeHeadRowIndex = gui.getSimulator().getTapeHeadRowIndex()-tapeBeginRowIndex;
 		
-		for(int i=0;i<tableTapeHeadColIndex;i++)
+		if(!((tableTapeHeadColIndex<0||tableTapeHeadColIndex>=COLUMNS_TO_DISPLAY)||(tableTapeHeadRowIndex<0||tableTapeHeadRowIndex>=ROWS_TO_DISPLAY)))
 		{
-			x+=table.getColumnModel().getColumn(i).getWidth();
-		}
-		
-		g.setColor(GUI.TAPE_HEAD_COLOR);
-		
-		//Draw the tape head cell highlight.
-		for(int i=0;i<GUI.TAPE_FONT.getSize()/8;i++)
-		{
-			g.drawRect(x+i, y+i, tapeHeadColumn.getWidth()-(i*2+2), GUI.TAPE_FONT.getSize()*2-(i*2+1));
-		}
-		
-		if(drawState)
-		{
-			String stateString = ""+gui.getSimulator().getCurrentState();
-			Font TAPE_HEAD_SUBSCRIPT_FONT = new Font(GUI.TAPE_HEAD_FONT.getFamily(),GUI.TAPE_HEAD_FONT.getStyle(),(GUI.TAPE_HEAD_FONT.getSize()*3)/4);
+			TableColumn tapeHeadColumn = table.getColumnModel().getColumn(tableTapeHeadColIndex);
 			
-			int tapeHeadHorizontalInset = GUI.TAPE_HEAD_FONT.getSize()*2/5;
-			int tapeHeadVerticalInset = GUI.TAPE_HEAD_FONT.getSize()*3/5;
-				int tapeHeadVerticalSubscriptInset = tapeHeadVerticalInset*3/4;
-			int tapeHeadSWidth = GUI.TAPE_HEAD_FONT.getSize()*3/5;
-			int tapeHeadTextSpacing = GUI.TAPE_HEAD_FONT.getSize()*1/5; 
-			int tapeHeadStateWidth = TAPE_HEAD_SUBSCRIPT_FONT.getSize()*3/5*stateString.length();
-			int tapeHeadWidth = tapeHeadHorizontalInset+tapeHeadSWidth+tapeHeadTextSpacing+tapeHeadStateWidth+tapeHeadHorizontalInset;
-				if(tapeHeadWidth%2!=0)
-				{
-					tapeHeadWidth+=1;
-				}
-			int tapeHeadHeight = TAPE_HEAD_SUBSCRIPT_FONT.getSize()*3;
-			int tapeHeadX = (x+tapeHeadColumn.getWidth()/2)-tapeHeadWidth/2;
-			int tapeHeadY = y+table.getHeight();
-			int tapeHeadPointHeight = TAPE_HEAD_SUBSCRIPT_FONT.getSize();
-			//Fill the rectangle containing the text:
-			g.fillRect(tapeHeadX, tapeHeadY+tapeHeadPointHeight, tapeHeadWidth, tapeHeadHeight-tapeHeadPointHeight);
+			int tableTapeHeadRowHeight = table.getRowHeight(tableTapeHeadRowIndex);
 			
-			//Set the dimensions of the tape head point
-			xPoints = new int[] {tapeHeadX,tapeHeadX+tapeHeadWidth/2,tapeHeadX+tapeHeadWidth};
-			yPoints = new int[] {tapeHeadY+tapeHeadPointHeight,tapeHeadY,tapeHeadY+tapeHeadPointHeight};
-			nPoints = 3;
-			headArrow = new Polygon(xPoints,yPoints,nPoints);
-		
-			//Draw the tape head point:
-			g.fillPolygon(headArrow);
+			for(int i=0;i<tableTapeHeadColIndex;i++)
+			{
+				x+=table.getColumnModel().getColumn(i).getWidth();
+			}
+			for(int i=0;i<tableTapeHeadRowIndex;i++)
+			{
+				y+=table.getRowHeight(i);
+			}
 			
-			//Draw the text:
-			g.setColor(GUI.TAPE_HEAD_FONT_COLOR);
-			g.setFont(GUI.TAPE_HEAD_FONT);
-			g.drawString("S", tapeHeadX+tapeHeadHorizontalInset, tapeHeadY+tapeHeadHeight-tapeHeadVerticalInset);
-			g.setFont(TAPE_HEAD_SUBSCRIPT_FONT);
-			g.drawString(stateString, tapeHeadX+tapeHeadHorizontalInset+tapeHeadSWidth+tapeHeadTextSpacing,tapeHeadY+tapeHeadHeight-tapeHeadVerticalSubscriptInset);
-			//*/
+			g.setColor(GUI.TAPE_HEAD_COLOR);
+			
+			//Draw the tape head cell highlight.
+			for(int i=0;i<GUI.TAPE_FONT.getSize()/8;i++)
+			{
+				g.drawRect(x+i, y+i, tapeHeadColumn.getWidth()-(i*2+2), GUI.TAPE_FONT.getSize()*2-(i*2+1));
+			}
+			
+			if(drawState)
+			{
+				String stateString = ""+gui.getSimulator().getCurrentState();
+				Font TAPE_HEAD_SUBSCRIPT_FONT = new Font(GUI.TAPE_HEAD_FONT.getFamily(),GUI.TAPE_HEAD_FONT.getStyle(),(GUI.TAPE_HEAD_FONT.getSize()*3)/4);
+				
+				int tapeHeadHorizontalInset = GUI.TAPE_HEAD_FONT.getSize()*2/5;
+				int tapeHeadVerticalInset = GUI.TAPE_HEAD_FONT.getSize()*3/5;
+					int tapeHeadVerticalSubscriptInset = tapeHeadVerticalInset*3/4;
+				int tapeHeadSWidth = GUI.TAPE_HEAD_FONT.getSize()*3/5;
+				int tapeHeadTextSpacing = GUI.TAPE_HEAD_FONT.getSize()*1/5; 
+				int tapeHeadStateWidth = TAPE_HEAD_SUBSCRIPT_FONT.getSize()*3/5*stateString.length();
+				int tapeHeadWidth = tapeHeadHorizontalInset+tapeHeadSWidth+tapeHeadTextSpacing+tapeHeadStateWidth+tapeHeadHorizontalInset;
+					if(tapeHeadWidth%2!=0)
+					{
+						tapeHeadWidth+=1;
+					}
+				int tapeHeadHeight = TAPE_HEAD_SUBSCRIPT_FONT.getSize()*3;
+				int tapeHeadX = (x+tapeHeadColumn.getWidth()/2)-tapeHeadWidth/2;
+				int tapeHeadY = y+tableTapeHeadRowHeight;
+				int tapeHeadPointHeight = TAPE_HEAD_SUBSCRIPT_FONT.getSize();
+				//Fill the rectangle containing the text:
+				g.fillRect(tapeHeadX, tapeHeadY+tapeHeadPointHeight, tapeHeadWidth, tapeHeadHeight-tapeHeadPointHeight);
+				
+				//Set the dimensions of the tape head point
+				xPoints = new int[] {tapeHeadX,tapeHeadX+tapeHeadWidth/2,tapeHeadX+tapeHeadWidth};
+				yPoints = new int[] {tapeHeadY+tapeHeadPointHeight,tapeHeadY,tapeHeadY+tapeHeadPointHeight};
+				nPoints = 3;
+				headArrow = new Polygon(xPoints,yPoints,nPoints);
+			
+				//Draw the tape head point:
+				g.fillPolygon(headArrow);
+				
+				//Draw the text:
+				g.setColor(GUI.TAPE_HEAD_FONT_COLOR);
+				g.setFont(GUI.TAPE_HEAD_FONT);
+				g.drawString("S", tapeHeadX+tapeHeadHorizontalInset, tapeHeadY+tapeHeadHeight-tapeHeadVerticalInset);
+				g.setFont(TAPE_HEAD_SUBSCRIPT_FONT);
+				g.drawString(stateString, tapeHeadX+tapeHeadHorizontalInset+tapeHeadSWidth+tapeHeadTextSpacing,tapeHeadY+tapeHeadHeight-tapeHeadVerticalSubscriptInset);
+				//*/
+			}
 		}
+	}
+
+	public int getRowCount()
+	{
+		return ROWS_TO_DISPLAY;
+	}
+
+	public int getColumnCount()
+	{
+		return COLUMNS_TO_DISPLAY;
 	}
 }

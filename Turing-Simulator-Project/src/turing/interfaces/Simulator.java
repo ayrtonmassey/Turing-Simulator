@@ -2,7 +2,11 @@ package turing.interfaces;
 
 import java.util.List;
 
+import turing.TuringException;
+
 public interface Simulator {
+
+	public static final int BEFORE = 0,AFTER = 1;
 
 	/**
 	 * @return the current state the Turing machine is in.
@@ -39,8 +43,9 @@ public interface Simulator {
 	 * @param rowIndex The row index of the cell to write to.
 	 * @param columnIndex The column index of the cell to write to.
 	 * @return <code>true</code> if the cell was written to successfully, <code>false</code> if not.
+	 * @throws TuringException 
 	 */
-	public boolean setTapeCellSymbol(char symbol,int rowIndex,int columnIndex);
+	public boolean setTapeCellSymbol(char symbol,int rowIndex,int columnIndex) throws TuringException;
 	
 	/**
 	 * Returns the contents of the tape between beginIndex and endIndex inclusive.
@@ -59,11 +64,15 @@ public interface Simulator {
 	 * @return A List&lt;Character&gt; containing the cells on the tape between
 	 * <code>beginIndex</code> and <code>endIndex</code>
 	 */
-	public List<Character> getTapeContents(int rowBeginIndex,int rowEndIndex,int colBeginIndex,int colEndIndex);
+	public List<List<Character>> getTapeContents(int rowBeginIndex,int rowEndIndex,int colBeginIndex,int colEndIndex);
 
 	/**
 	 * Returns the {@link Instruction} currently being executed by the Turing simulator.
 	 * @return the {@link Instruction} currently being executed by the Turing simulator.
 	 */
 	public Instruction getCurrentInstruction();
+
+	public int getTapeOriginX();
+
+	public int getTapeOriginY();
 }

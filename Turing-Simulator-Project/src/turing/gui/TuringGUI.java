@@ -59,7 +59,6 @@ public class TuringGUI extends JFrame implements GUI {
 		this.pack();
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
-		this.setBackground(new Color(255,0,0));
 	}
 
 	/**
@@ -81,7 +80,7 @@ public class TuringGUI extends JFrame implements GUI {
 			gc.anchor=GridBagConstraints.NORTH;
 		this.add(instruction,gc);
 		
-		tape = new TapePanel(this);
+		tape = new TapePanel(this,GUI.TAPE_ROWS_TO_DISPLAY,GUI.TAPE_COLUMNS_TO_DISPLAY);
 			gc.fill=GridBagConstraints.BOTH;
 			gc.gridx=0;
 			gc.gridy=0;
@@ -101,10 +100,10 @@ public class TuringGUI extends JFrame implements GUI {
 		this.setMinimumSize(	new Dimension(800,600));
 		this.setPreferredSize(	new Dimension(800,600));
 		this.setMaximumSize(	new Dimension(800,600));
-		
-		this.setLayout(new BoxLayout(this.getContentPane(),BoxLayout.Y_AXIS));
-		
+
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		this.setTitle("Baby's First Turing Machine");
 	}
 
 	@Override

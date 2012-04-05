@@ -13,15 +13,15 @@ public class TapeModel extends AbstractTableModel {
 	 * Although the tape contains char values, using String allows
 	 * us to use the default cell editor for the JTable
 	 */
-	public String[][] tapeData = new String[GUI.TAPE_ROWS_TO_DISPLAY][GUI.TAPE_COLUMNS_TO_DISPLAY];
+	public String[][] tapeData;
 	
 	GUI gui;
-	JPanel parent;
+	TapePanel parent;
 	
 	/**
 	  * @param gui The GUI for the Turing Simulator.
 	  */
-	TapeModel(GUI gui,JPanel parent)
+	TapeModel(GUI gui,TapePanel parent)
 	{
 		this.gui = gui;
 		this.parent = parent;
@@ -41,7 +41,7 @@ public class TapeModel extends AbstractTableModel {
 	@Override
 	public int getColumnCount()
 	{
-		return GUI.TAPE_COLUMNS_TO_DISPLAY;
+		return tapeData[0].length;
 	}
 
 	/**
@@ -57,7 +57,7 @@ public class TapeModel extends AbstractTableModel {
 	@Override
 	public int getRowCount()
 	{
-		return GUI.TAPE_ROWS_TO_DISPLAY;
+		return tapeData.length;
 	}
 
 	@Override
@@ -71,6 +71,7 @@ public class TapeModel extends AbstractTableModel {
 	 */
 	private void initTapeData()
 	{
+		tapeData = new String[parent.getRowCount()][parent.getColumnCount()];
 		for(int y=0;y<tapeData.length;y++)
 		{
 			for(int x=0;x<tapeData[y].length;x++)

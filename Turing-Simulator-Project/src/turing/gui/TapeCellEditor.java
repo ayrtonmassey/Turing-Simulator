@@ -11,6 +11,8 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.TableCellEditor;
 
+import turing.Main;
+import turing.TuringException;
 import turing.interfaces.GUI;
 
 public class TapeCellEditor extends AbstractCellEditor implements TableCellEditor {
@@ -73,10 +75,18 @@ public class TapeCellEditor extends AbstractCellEditor implements TableCellEdito
 				cValue='_';
 			}
 			
-			if(gui.getSimulator().setTapeCellSymbol(cValue, row, parent.getTapeBeginIndex()+column))
+			try
 			{
-				fireEditingStopped();
-				return true;
+				if(gui.getSimulator().setTapeCellSymbol(cValue, parent.getTapeBeginRowIndex()+row, parent.getTapeBeginColumnIndex()+column))
+				{
+					fireEditingStopped();
+					return true;
+				}
+			}
+			catch(TuringException ex)
+			{
+				Main.err.displayError(ex);
+				return false;
 			}
 		}
 		return false;
