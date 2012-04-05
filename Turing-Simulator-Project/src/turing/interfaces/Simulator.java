@@ -1,5 +1,6 @@
 package turing.interfaces;
 
+import java.io.File;
 import java.util.List;
 
 import turing.TuringException;
@@ -82,4 +83,11 @@ public interface Simulator {
 	 * @return The y-coordinate of the current position of the origin cell.
 	 */
 	public int getTapeOriginY();
+	
+	/**
+	 * Opens the given file in the simulator.
+	 * <p>
+	 * @throws TuringException if the file is invalid or an error occurs while opening the file.
+	 */
+	public void openFile(File f) throws TuringException;
 }
