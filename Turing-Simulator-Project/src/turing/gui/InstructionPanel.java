@@ -6,8 +6,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -21,6 +19,10 @@ public class InstructionPanel extends JComponent {
 	List<Instruction> history = new ArrayList<Instruction>();
 	
 	GUI gui;
+	
+	int yOffset=GUI.INSTRUCTION_FONT.getSize()/2;
+	
+	int lineOffset=GUI.INSTRUCTION_FONT.getSize()/8;
 	
 	/**
 	 * Creates a new InstructionPanel.
@@ -38,67 +40,11 @@ public class InstructionPanel extends JComponent {
 			this.setBackground(Color.PINK);
 		}
 		
-		history.add(new TuringInstruction(0,'a',1,'a',TuringInstruction.MOVE_LEFT));
-		history.add(new TuringInstruction(100,'a',89,'a',TuringInstruction.MOVE_LEFT));
-		history.add(new TuringInstruction(923,'d',14,'1',TuringInstruction.MOVE_RIGHT));
-		history.add(new TuringInstruction(1781,'c',2,'8',TuringInstruction.HALT));
+		history.add(new TuringInstruction(0,'a',1,'a',Instruction.MOVE_LEFT));
+		history.add(new TuringInstruction(100,'a',89,'a',Instruction.MOVE_LEFT));
+		history.add(new TuringInstruction(923,'d',14,'1',Instruction.MOVE_RIGHT));
+		history.add(new TuringInstruction(1781,'c',2,'8',Instruction.HALT));
 	}
-	
-	/**
-	 * Initialises the style of this component.
-	 */
-	private void init()
-	{
-		int w = GUI.INSTRUCTION_FONT.getSize()*10;
-		int h = GUI.INSTRUCTION_FONT.getSize()*4;
-		
-		this.setMinimumSize(new Dimension(	w,h));
-		this.setPreferredSize(new Dimension(w,h));
-		this.setMaximumSize(new Dimension(	w,h));
-		
-		this.setOpaque(true);
-		this.setBackground(Color.white);
-		this.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-	}
-	
-	/**
-	 * Draws the instruction history to this component.
-	 * @see #drawInstruction(Graphics, Instruction, int)
-	 */
-	@Override
-	public void paintComponent(Graphics g)
-	{
-		if(this.isOpaque())
-		{
-			g.setColor(this.getBackground());
-			g.fillRect(0,0,this.getWidth(),this.getHeight());
-		}
-		
-		for(int i=history.size()-1, count=0; i>=0 && count<GUI.INSTRUCTIONS_TO_DISPLAY; i--, count++)
-		{
-			drawInstruction(g, history.get(i),count);
-		}
-	}
-	
-	/**
-	 * Updates the instruction display.
-	 */
-	public void update()
-	{
-		Instruction i = gui.getSimulator().getCurrentInstruction();
-		if(i!=null)
-		{
-			history.add(i);
-			if(history.size()>GUI.INSTRUCTION_HISTORY_LIMIT)
-			{
-				history.remove(0);
-			}
-			repaint();
-		}
-	}
-	
-	int yOffset=GUI.INSTRUCTION_FONT.getSize()/2;
-	int lineOffset=GUI.INSTRUCTION_FONT.getSize()/8;
 	
 	/**
 	 * Draws an quintuplet to the screen in the form (Current State,Input Symbol,Next State,Output Symbol,Direction).
@@ -179,6 +125,58 @@ public class InstructionPanel extends JComponent {
 		g.setFont(GUI.INSTRUCTION_FONT);
 		
 		g.drawString(","+outputSymbol+","+direction+")", xOffset, y);
+	}
+	
+	/**
+	 * Initialises the style of this component.
+	 */
+	private void init()
+	{
+		int w = GUI.INSTRUCTION_FONT.getSize()*10;
+		int h = GUI.INSTRUCTION_FONT.getSize()*4;
+		
+		this.setMinimumSize(new Dimension(	w,h));
+		this.setPreferredSize(new Dimension(w,h));
+		this.setMaximumSize(new Dimension(	w,h));
+		
+		this.setOpaque(true);
+		this.setBackground(Color.white);
+		this.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+	}
+	/**
+	 * Draws the instruction history to this component.
+	 * @see #drawInstruction(Graphics, Instruction, int)
+	 */
+	@Override
+	public void paintComponent(Graphics g)
+	{
+		if(this.isOpaque())
+		{
+			g.setColor(this.getBackground());
+			g.fillRect(0,0,this.getWidth(),this.getHeight());
+		}
+		
+		for(int i=history.size()-1, count=0; i>=0 && count<GUI.INSTRUCTIONS_TO_DISPLAY; i--, count++)
+		{
+			drawInstruction(g, history.get(i),count);
+		}
+	}
+	
+	/**
+	 * Updates the instruction display.
+	 */
+	public void update()
+	{
+		Instruction i = gui.getSimulator().getCurrentInstruction();
+		if(i!=null)
+		{
+			history.add(i);
+			if(history.size()>GUI.INSTRUCTION_HISTORY_LIMIT)
+			{
+				history.remove(0);
+			}
+			repaint();
+		}
 	}
 	
 }

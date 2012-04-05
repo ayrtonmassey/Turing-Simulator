@@ -22,13 +22,7 @@ public interface GUI {
 
 	public static final int INSTRUCTION_HISTORY_LIMIT = 50;
 	
-	/**
-	 * Updates the GUI to the current state of the Turing machine.
-	 * <p>
-	 * This method should be called each time the Turing simulator carries out an instruction,
-	 * so that the GUI displays the current state, tape contents etc.
-	 */
-	public void update();
+	public boolean debugMode();
 
 	/**
 	 * Returns the Simulator for the Turing machine simulator.
@@ -36,6 +30,12 @@ public interface GUI {
 	 */
 	public Simulator getSimulator();
 
-	public boolean debugMode();
+	/**
+	 * Updates the GUI to the current state of the Turing machine.
+	 * <p>
+	 * This method should be called each time the Turing simulator carries out an instruction,
+	 * so that the GUI displays the current state, tape contents etc.
+	 */
+	public void update();
 	
 }

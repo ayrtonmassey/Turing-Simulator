@@ -1,6 +1,5 @@
 package turing.gui;
 
-import javax.swing.JPanel;
 import javax.swing.table.AbstractTableModel;
 
 import turing.Main;

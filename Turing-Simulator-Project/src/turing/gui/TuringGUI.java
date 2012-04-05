@@ -1,11 +1,9 @@
 package turing.gui;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
-import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 
 import turing.interfaces.GUI;
@@ -39,11 +37,17 @@ public class TuringGUI extends JFrame implements GUI {
 	}
 	
 	@Override
+	public boolean debugMode()
+	{
+		return DEBUG;
+	}
+	
+	@Override
 	public Simulator getSimulator()
 	{
 		return sim;
 	}
-	
+
 	/**
 	 * Initialises this GUI.
 	 * <p>
@@ -60,7 +64,7 @@ public class TuringGUI extends JFrame implements GUI {
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
 	}
-
+	
 	/**
 	 * Initialises the components for this GUI.
 	 */
@@ -91,7 +95,7 @@ public class TuringGUI extends JFrame implements GUI {
 			gc.anchor=GridBagConstraints.CENTER;
 		this.add(tape,gc);
 	}
-	
+
 	/**
 	 * Initialises the frame which contains the GUI elements. 
 	 */
@@ -111,11 +115,5 @@ public class TuringGUI extends JFrame implements GUI {
 	{
 		tape.update();
 		instruction.update();
-	}
-
-	@Override
-	public boolean debugMode()
-	{
-		return DEBUG;
 	}
 }

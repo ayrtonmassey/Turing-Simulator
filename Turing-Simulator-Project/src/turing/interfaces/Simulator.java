@@ -10,40 +10,15 @@ public interface Simulator {
 	public static final int BEFORE = 0,AFTER = 1;
 
 	/**
+	 * @return the {@link Instruction} currently being executed by the Turing simulator.
+	 */
+	public Instruction getCurrentInstruction();
+
+	/**
 	 * @return the current state the Turing machine is in.
 	 */
 	public int getCurrentState();
 
-	/**
-	 * @return <code>true</code> if the tape is editable, <code>false</code> if not.
-	 */
-	public boolean isTapeEditable();
-
-	/**
-	 * The column index of the tape head is equivalent to its x-coordinate if you imagine the tape as a grid.
-	 * @return the column index of the tape head on the tape.
-	 */
-	public int getTapeHeadColumnIndex();
-	
-	/**
-	 * The row index of the tape head is equivalent to its y-coordinate if you imagine the tape as a grid.
-	 * @return the row index of the tape head on the tape.
-	 */
-	public int getTapeHeadRowIndex();
-	
-	/**
-	 * Sets the symbol on the tape at (<code>rowIndex</code>,<code>columnIndex</code>) to <code>symbol</code>.
-	 * <p>
-	 * Because the tape is of infinite length, this method may try to edit cells which are not in the
-	 * tape data structure. This method should create those cells and then assign the value to them.
-	 * @param symbol The symbol to write to the tape.
-	 * @param rowIndex The row index of the cell to write to.
-	 * @param columnIndex The column index of the cell to write to.
-	 * @return <code>true</code> if the cell was written to successfully, <code>false</code> if not.
-	 * @throws TuringException 
-	 */
-	public boolean setTapeCellSymbol(char symbol,int rowIndex,int columnIndex) throws TuringException;
-	
 	/**
 	 * Returns the contents of the tape between rowBeginIndex, rowEndIndex, colBeginIndex and colEndIndex.
 	 * <p>
@@ -58,12 +33,19 @@ public interface Simulator {
 	 * <code>beginIndex</code> and <code>endIndex</code>
 	 */
 	public List<List<Character>> getTapeContents(int rowBeginIndex,int rowEndIndex,int colBeginIndex,int colEndIndex);
-
+	
 	/**
-	 * @return the {@link Instruction} currently being executed by the Turing simulator.
+	 * The column index of the tape head is equivalent to its x-coordinate if you imagine the tape as a grid.
+	 * @return the column index of the tape head on the tape.
 	 */
-	public Instruction getCurrentInstruction();
-
+	public int getTapeHeadColumnIndex();
+	
+	/**
+	 * The row index of the tape head is equivalent to its y-coordinate if you imagine the tape as a grid.
+	 * @return the row index of the tape head on the tape.
+	 */
+	public int getTapeHeadRowIndex();
+	
 	/**
 	 * Returns the original x-coordinate of the tape head.
 	 * <p>
@@ -83,11 +65,29 @@ public interface Simulator {
 	 * @return The y-coordinate of the current position of the origin cell.
 	 */
 	public int getTapeOriginY();
-	
+
+	/**
+	 * @return <code>true</code> if the tape is editable, <code>false</code> if not.
+	 */
+	public boolean isTapeEditable();
+
 	/**
 	 * Opens the given file in the simulator.
 	 * <p>
 	 * @throws TuringException if the file is invalid or an error occurs while opening the file.
 	 */
 	public void openFile(File f) throws TuringException;
+	
+	/**
+	 * Sets the symbol on the tape at (<code>rowIndex</code>,<code>columnIndex</code>) to <code>symbol</code>.
+	 * <p>
+	 * Because the tape is of infinite length, this method may try to edit cells which are not in the
+	 * tape data structure. This method should create those cells and then assign the value to them.
+	 * @param symbol The symbol to write to the tape.
+	 * @param rowIndex The row index of the cell to write to.
+	 * @param columnIndex The column index of the cell to write to.
+	 * @return <code>true</code> if the cell was written to successfully, <code>false</code> if not.
+	 * @throws TuringException 
+	 */
+	public boolean setTapeCellSymbol(char symbol,int rowIndex,int columnIndex) throws TuringException;
 }
