@@ -88,7 +88,7 @@ public class TapeModel extends AbstractTableModel {
 	@Override
 	public boolean isCellEditable(int rowIndex, int columnIndex)
 	{
-		if(gui.getSimulator().isTapeEditable())
+		if(gui.getSimulator().getTape().isTapeEditable())
 		{
 			return true;
 		}

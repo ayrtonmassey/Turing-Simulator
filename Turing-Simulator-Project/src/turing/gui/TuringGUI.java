@@ -33,7 +33,7 @@ public class TuringGUI extends JFrame implements GUI {
 	{
 		this.sim = sim;
 		this.currentState = sim.getCurrentState();
-		this.tapeHeadColumnIndex = sim.getTapeHeadColumnIndex();
+		this.tapeHeadColumnIndex = sim.getTape().getTapeHeadColumnIndex();
 		
 		init();
 	}
@@ -140,7 +140,7 @@ public class TuringGUI extends JFrame implements GUI {
 		tape.update();
 		instruction.update();
 		
-		status.updateTapeHeadCoordinates(sim.getTapeHeadRowIndex(), sim.getTapeHeadColumnIndex());
+		status.updateTapeHeadCoordinates(sim.getTape().getTapeHeadRowIndex(), sim.getTape().getTapeHeadColumnIndex());
 	}
 
 	@Override

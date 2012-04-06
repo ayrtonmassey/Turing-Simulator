@@ -46,7 +46,6 @@ public interface GUI {
 
 	public void updateTapeDisplayCoordinates(int tapeBeginRowIndex,
 			int tapeEndRowIndex, int tapeBeginColumnIndex,
-			int tapeEndColumnIndex);
-	
+			int tapeEndColumnIndex);	
 	
 }

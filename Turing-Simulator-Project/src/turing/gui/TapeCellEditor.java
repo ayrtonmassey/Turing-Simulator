@@ -67,7 +67,7 @@ public class TapeCellEditor extends AbstractCellEditor implements TableCellEdito
 	@Override
 	public boolean isCellEditable(EventObject anEvent)
 	{
-		if(gui.getSimulator().isTapeEditable())
+		if(gui.getSimulator().getTape().isTapeEditable())
 		{
 			if (anEvent instanceof MouseEvent)
 			{
@@ -95,7 +95,7 @@ public class TapeCellEditor extends AbstractCellEditor implements TableCellEdito
 			
 			try
 			{
-				if(gui.getSimulator().setTapeCellSymbol(cValue, parent.getTapeBeginRowIndex()+row, parent.getTapeBeginColumnIndex()+column))
+				if(gui.getSimulator().getTape().setTapeCellSymbol(cValue, parent.getTapeBeginColumnIndex()+column, parent.getTapeBeginRowIndex()+row))
 				{
 					fireEditingStopped();
 					return true;

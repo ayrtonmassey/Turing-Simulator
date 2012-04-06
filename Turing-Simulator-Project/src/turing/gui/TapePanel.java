@@ -82,8 +82,8 @@ public class TapePanel extends JPanel implements ListSelectionListener {
 		
 		boolean drawState = true;
 		
-		int tableTapeHeadColIndex = gui.getSimulator().getTapeHeadColumnIndex()-tapeBeginColumnIndex;
-		int tableTapeHeadRowIndex = gui.getSimulator().getTapeHeadRowIndex()-tapeBeginRowIndex;
+		int tableTapeHeadColIndex = gui.getSimulator().getTape().getTapeHeadColumnIndex()-tapeBeginColumnIndex;
+		int tableTapeHeadRowIndex = gui.getSimulator().getTape().getTapeHeadRowIndex()-tapeBeginRowIndex;
 		
 		if(!((tableTapeHeadColIndex<0||tableTapeHeadColIndex>=COLUMNS_TO_DISPLAY)||(tableTapeHeadRowIndex<0||tableTapeHeadRowIndex>=ROWS_TO_DISPLAY)))
 		{
@@ -280,14 +280,12 @@ public class TapePanel extends JPanel implements ListSelectionListener {
 	 */
 	private void updateTape()
 	{
-		int ox = gui.getSimulator().getTapeOriginX();
-		int oy = gui.getSimulator().getTapeOriginY();
-		int beginRowIndex = tapeBeginRowIndex+oy;
-		int endRowIndex = tapeEndRowIndex+oy;
-		int beginColumnIndex = tapeBeginColumnIndex+ox;
-		int endColumnIndex = tapeEndColumnIndex+ox;
+		int beginRowIndex = tapeBeginRowIndex;
+		int endRowIndex = tapeEndRowIndex;
+		int beginColumnIndex = tapeBeginColumnIndex;
+		int endColumnIndex = tapeEndColumnIndex;
 		
-		List<List<Character>> tape = gui.getSimulator().getTapeContents(beginRowIndex, endRowIndex, beginColumnIndex, endColumnIndex);
+		List<List<Character>> tape = gui.getSimulator().getTape().getTapeContents(beginRowIndex, endRowIndex, beginColumnIndex, endColumnIndex);
 		
 		for(int y=0;y<tape.size();y++)
 		{

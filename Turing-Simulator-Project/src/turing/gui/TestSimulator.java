@@ -7,6 +7,7 @@ import javax.swing.JOptionPane;
 
 import turing.Main;
 import turing.TuringException;
+import turing.simulator.Tape;
 import turing.simulator.TuringInstruction;
 import turing.interfaces.GUI;
 import turing.interfaces.Instruction;
@@ -22,13 +23,11 @@ public class TestSimulator implements Simulator {
 	
 	GUI gui;
 	
-	private List<List<Character>> tape = new ArrayList<List<Character>>();
-	
 	private List<Instruction> instructionSet = new ArrayList<Instruction>();
 	
 	private Instruction currentInstruction;
 	
-	private int tapeHeadColumnIndex;
+
 	
 	private int currentState = 0;
 	
@@ -36,11 +35,6 @@ public class TestSimulator implements Simulator {
 	
 	private boolean paused = true;
 
-	private int tapeOriginX;
-
-	private int tapeOriginY;
-
-	private int tapeHeadRowIndex;
 	
 	public TestSimulator()
 	{
@@ -60,84 +54,33 @@ public class TestSimulator implements Simulator {
 		return currentState;
 	}
 	
-	@Override
-	public List<List<Character>> getTapeContents(int rowBeginIndex,int rowEndIndex,int colBeginIndex, int colEndIndex)
-	{
-		List<List<Character>> tapeContents = new ArrayList<List<Character>>();
-		for(int y = rowBeginIndex; y<=rowEndIndex;y++)
-		{
-			List<Character> tapeRow = new ArrayList<Character>();
-			for(int x = colBeginIndex; x<=colEndIndex;x++)
-			{
-				tapeRow.add(getTapeSymbolAt(x,y));
-			}
-			tapeContents.add(tapeRow);
-		}
-	
-		return tapeContents;
-	}
-	
-	@Override
-	public int getTapeHeadColumnIndex()
-	{
-		//TODO: FILL THIS IN
-		return tapeHeadColumnIndex;
-	}
-	
-	@Override
-	public int getTapeHeadRowIndex()
-	{
-		return tapeHeadRowIndex;
-	}
-
-	@Override
-	public int getTapeOriginX()
-	{
-		return tapeOriginX;
-	}
-
-	@Override
-	public int getTapeOriginY()
-	{
-		return tapeOriginY;
-	}
-
-	private Character getTapeSymbolAt(int x, int y)
-	{
-		if(y<tape.size()&&y>=0)
-		{
-			if(x<tape.get(y).size()&&x>=0)
-			{
-				return tape.get(y).get(x);
-			}
-		}
-		return '_';
-	}
-
 	public void init()
 	{
-		tape.add(new ArrayList<Character>());
+		tape = new Tape(0,0);
+		tape.setTapeHeadX(3);
+		tape.setTapeHeadY(3);
+		
 		try
 		{
-			this.setTapeCellSymbol('0', 0, 0);
-			this.setTapeCellSymbol('1', 0, 1);
-			this.setTapeCellSymbol('2', 0, 2);
-			this.setTapeCellSymbol('3', 0, 3);
-			this.setTapeCellSymbol('4', 0, 4);
-			this.setTapeCellSymbol('5', 0, 5);
-			this.setTapeCellSymbol('6', 0, 6);
-			this.setTapeCellSymbol('7', 0, 7);
-			this.setTapeCellSymbol('8', 0, 8);
-			this.setTapeCellSymbol('9', 0, 9);
-			this.setTapeCellSymbol('0', 0, 10);
-			this.setTapeCellSymbol('1', 0, 11);
-			this.setTapeCellSymbol('2', 0, 12);
-			this.setTapeCellSymbol('3', 0, 13);
-			this.setTapeCellSymbol('4', 0, 14);
-			this.setTapeCellSymbol('5', 0, 15);
+			tape.setTapeCellSymbol('0', 0, 0);
+			tape.setTapeCellSymbol('1', 1, 0);
+			tape.setTapeCellSymbol('2', 2, 0);
+			tape.setTapeCellSymbol('3', 3, 0);
+			tape.setTapeCellSymbol('4', 4, 0);
+			tape.setTapeCellSymbol('5', 5, 0);
+			tape.setTapeCellSymbol('6', 6, 0);
+			tape.setTapeCellSymbol('7', 7, 0);
+			tape.setTapeCellSymbol('8', 8, 0);
+			tape.setTapeCellSymbol('9', 9, 0);
+			tape.setTapeCellSymbol('0', 10, 0);
+			tape.setTapeCellSymbol('1', 11, 0);
+			tape.setTapeCellSymbol('2', 12, 0);
+			tape.setTapeCellSymbol('3', 13, 0);
+			tape.setTapeCellSymbol('4', 14, 0);
+			tape.setTapeCellSymbol('5', 15, 0);
 			
-			this.setTapeCellSymbol('#', 3, 1);
-			this.setTapeCellSymbol('#', 3, 9);
+			tape.setTapeCellSymbol('#', 1, 3);
+			tape.setTapeCellSymbol('#', 5, 3);
 		}
 		catch (TuringException ex)
 		{
@@ -145,10 +88,7 @@ public class TestSimulator implements Simulator {
 		}
 		
 		System.out.println("INITIAL TAPE:");
-		printTape();
-		
-		tapeHeadColumnIndex = 7;
-		tapeHeadRowIndex = 3;
+		tape.print();
 		
 		instructionSet.add(new TuringInstruction(0,'_',0,'_',Instruction.MOVE_RIGHT));
 		instructionSet.add(new TuringInstruction(0,'#',1,'#',Instruction.MOVE_LEFT));
@@ -157,94 +97,20 @@ public class TestSimulator implements Simulator {
 		instructionSet.add(new TuringInstruction(1,'#',0,'#',Instruction.MOVE_RIGHT));
 	}
 	
-	public void insertColumns(int position,int count) throws TuringException
-	{
-		switch(position)
-		{
-		case Simulator.BEFORE:
-			for(int y=0;y<tape.size();y++)
-			{
-				for(int i=0;i<count;i++)
-				{
-					tape.get(y).add(0,'_');
-				}
-			}
-			tapeOriginX+=count;
-			break;
-		case Simulator.AFTER:
-			for(int y=0;y<tape.size();y++)
-			{
-				for(int i=0;i<count;i++)
-				{
-					tape.get(y).add('_');
-				}
-			}
-			break;
-		default:
-			throw new TuringException("Error inserting columns: "+position+" is not a valid position for insertion" +
-										" - use Simulator.BEFORE or Simulator.AFTER.");
-		}
-	}
-
-	private void insertRows(int position, int count) throws TuringException
-	{
-		switch(position)
-		{
-		case Simulator.BEFORE:
-			for(int i=0;i<count;i++)
-			{
-				tape.add(0,newBlankRow());
-			}
-			tapeOriginY+=count;
-			break;
-		case Simulator.AFTER:
-			for(int i=0;i<count;i++)
-			{
-				tape.add(newBlankRow());
-			}
-			break;
-		default:
-			throw new TuringException("Error inserting rows: "+position+" is not a valid position for insertion" +
-										" - use Simulator.BEFORE or Simulator.AFTER.");
-		}
-	}
-
-	@Override
-	public boolean isTapeEditable()
-	{
-		return true;
-	}
-
-	private List<Character> newBlankRow()
-	{
-		List<Character> blankRow = new ArrayList<Character>();
-		for(int i=0;i<tape.get(0).size();i++)
-		{
-			blankRow.add('_');
-		}
-		return blankRow;
-	}
-
 	@Override
     public void openFile(File f) throws TuringException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-	public void printTape()
-	{
-		for(int i = 0;i<tape.size();i++)
-		{
-			System.out.println(tape.get(i));
-		}
-	}
-
 	public void run()
 	{
-		gui = new TuringGUI(this);
+		//gui = new TuringGUI(this);
 		
 		init();
 		
-		//testTapeSetValueAt();
+		gui = new TuringGUI(this);
+		
+		testTapeSetValueAt();
 		
 		gui.update();
 		
@@ -276,70 +142,26 @@ public class TestSimulator implements Simulator {
 		}//*/
 	}
 
-	@Override
-	public boolean setTapeCellSymbol(char symbol, int rowIndex, int columnIndex) throws TuringException
-	{
-		if(isTapeEditable())
-		{
-			if(rowIndex<0)
-			{
-				int count = 0-rowIndex;
-				insertRows(Simulator.BEFORE,count);
-				rowIndex+=count;
-			}
-			else if(rowIndex>=tape.size())
-			{
-				int count = rowIndex-(tape.size()-1);
-				insertRows(Simulator.AFTER,count);
-			}
-			
-			if(columnIndex<0)
-			{
-				int count = 0-columnIndex;
-				insertColumns(Simulator.BEFORE,count);
-				columnIndex+=count;
-			}
-			else if(columnIndex>=tape.get(rowIndex).size())
-			{
-				int count = columnIndex-(tape.get(rowIndex).size()-1);
-				insertColumns(Simulator.AFTER,count);
-			}
-			
-			try
-			{
-				tape.get(rowIndex).set(columnIndex, symbol);
-			}
-			catch(IndexOutOfBoundsException ex)
-			{
-				throw new TuringException("Error setting tape symbol at ("+columnIndex+","+rowIndex+"): " +
-											"The tape cell does not exist in the data structure.");
-			}
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
+	
 
     public void testTapeSetValueAt()
 	{
-		System.out.println("\nTape Origin: ("+tapeOriginX+","+tapeOriginY+") Value: "+tape.get(tapeOriginY).get(tapeOriginX));
-		
+    	System.out.println("\nTape Origin: ("+tape.getTapeOriginX()+","+tape.getTapeOriginY()+") Value: "+tape.getTapeSymbolAt(tape.getTapeOriginX(), tape.getTapeOriginY()));
+    	
 		try
 		{
-			setTapeCellSymbol('a', 0, 0);
-			setTapeCellSymbol('b', 0, 4);
-			setTapeCellSymbol('c', 0, -1);
-			setTapeCellSymbol('d', 0, -10);
-			setTapeCellSymbol('e', 0, 15);
-			setTapeCellSymbol('f', 0, 21);
-			setTapeCellSymbol('g',-1,0);
-			setTapeCellSymbol('h',1,0);
-			setTapeCellSymbol('i',10,0);
-			setTapeCellSymbol('j',-5,0);
-			setTapeCellSymbol('k',1,1);
-			setTapeCellSymbol('l',-1,-1);
+			tape.setTapeCellSymbol('a', 0, 0);
+			tape.setTapeCellSymbol('b', 4, 0);
+			tape.setTapeCellSymbol('c', -1, 0);
+			tape.setTapeCellSymbol('d', -10, 0);
+			tape.setTapeCellSymbol('e', 15, 0);
+			tape.setTapeCellSymbol('f', 21, 0);
+			tape.setTapeCellSymbol('g',0,-1);
+			tape.setTapeCellSymbol('h',0,1);
+			tape.setTapeCellSymbol('i',0,10);
+			tape.setTapeCellSymbol('j',0,-5);
+			tape.setTapeCellSymbol('k',1,1);
+			tape.setTapeCellSymbol('l',-1,-1);
 		}
 		catch(TuringException ex)
 		{
@@ -347,9 +169,9 @@ public class TestSimulator implements Simulator {
 		}
 		
 		System.out.println("\nNEW TAPE:");
-		printTape();
+		tape.print();
 		
-		System.out.println("\nTape Origin: ("+tapeOriginX+","+tapeOriginY+") Value: "+tape.get(tapeOriginY).get(tapeOriginX));
+		System.out.println("\nTape Origin: ("+tape.getTapeOriginX()+","+tape.getTapeOriginY()+") Value: "+tape.getTapeSymbolAt(tape.getTapeOriginX(), tape.getTapeOriginY()));
 	}
 
 	@Override
@@ -388,40 +210,21 @@ public class TestSimulator implements Simulator {
 		try
 		{
 			//Update symbol and state
-			this.setTapeCellSymbol(currentInstruction.getOutputSymbol(), tapeHeadRowIndex, tapeHeadColumnIndex);
+			tape.setTapeCellSymbol(currentInstruction.getOutputSymbol(), tape.getTapeHeadX(), tape.getTapeHeadY());
 			currentState = currentInstruction.getNextState();
 			
 			//Move the tape head
 			switch(currentInstruction.getDirection())
 			{
 			case Instruction.MOVE_LEFT:
-				tapeHeadColumnIndex--;
+				tape.setTapeHeadX(tape.getTapeHeadX()-1);
 				break;
 			case Instruction.MOVE_RIGHT:
-				tapeHeadColumnIndex++;
+				tape.setTapeHeadX(tape.getTapeHeadX()+1);
 				break;
 			default:
 				System.out.println("ERROR!");
 				break;
-			}
-			
-			//Check if tape head is still inside the tape data structure
-			if(tapeHeadRowIndex<0)
-			{
-				insertRows(Simulator.BEFORE,1);
-			}
-			else if(tapeHeadRowIndex>tape.size())
-			{
-				insertRows(Simulator.AFTER,1);
-			}
-			
-			if(tapeHeadColumnIndex<0)
-			{
-				insertColumns(Simulator.BEFORE,1);
-			}
-			else if(tapeHeadColumnIndex>tape.get(0).size())
-			{
-				insertColumns(Simulator.AFTER,1);
 			}
 			
 			gui.update();
@@ -437,7 +240,7 @@ public class TestSimulator implements Simulator {
 		currentInstruction=null;
 		for(Instruction i : instructionSet)
 		{
-			if(i.getCurrentState()==currentState && i.getInputSymbol() == getTapeSymbolAt(tapeOriginX+tapeHeadColumnIndex,tapeOriginY+tapeHeadRowIndex))
+			if(i.getCurrentState()==currentState && i.getInputSymbol() == tape.getTapeSymbolAt(tape.getTapeHeadX(),tape.getTapeHeadY()))
 			{
 				currentInstruction = i;
 			}
@@ -455,5 +258,13 @@ public class TestSimulator implements Simulator {
 	public void setSpeed(int value)
 	{
 		this.sleep=value;
+	}
+
+	Tape tape;
+	
+	@Override
+	public Tape getTape()
+	{
+		return tape;
 	}
 }
