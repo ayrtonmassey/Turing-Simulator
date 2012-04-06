@@ -15,12 +15,14 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import turing.interfaces.GUI;
 
-public class TapePanel extends JPanel {
+public class TapePanel extends JPanel implements ListSelectionListener {
 
 	public static final int TAPE_CELLS_TO_DISPLAY=10;
 	
@@ -230,6 +232,7 @@ public class TapePanel extends JPanel {
 				//Selection Style
 			
 				table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+				table.getSelectionModel().addListSelectionListener(this);
 				table.setSelectionBackground(Color.WHITE);
 			
 			//Miscellaneous
@@ -269,6 +272,7 @@ public class TapePanel extends JPanel {
 	public void update()
 	{
 		updateTape();
+		gui.updateTapeDisplayCoordinates(tapeBeginRowIndex,tapeEndRowIndex,tapeBeginColumnIndex,tapeEndColumnIndex);
 	}
 
 	/**
@@ -292,5 +296,11 @@ public class TapePanel extends JPanel {
 				table.setValueAt(tape.get(y).get(x), y, x);
 			}
 		}
+	}
+
+	@Override
+	public void valueChanged(ListSelectionEvent e)
+	{
+		repaint();
 	}
 }

@@ -32,9 +32,9 @@ public class TestSimulator implements Simulator {
 	
 	private int currentState = 0;
 	
-	private int sleep = 500;
+	private int sleep=Simulator.SPEED_INIT;
 	
-	boolean paused=false;
+	private boolean paused = true;
 
 	private int tapeOriginX;
 
@@ -151,10 +151,10 @@ public class TestSimulator implements Simulator {
 		tapeHeadRowIndex = 3;
 		
 		instructionSet.add(new TuringInstruction(0,'_',0,'_',Instruction.MOVE_RIGHT));
-		instructionSet.add(new TuringInstruction(0,'#',2147483647,'#',Instruction.MOVE_LEFT));
+		instructionSet.add(new TuringInstruction(0,'#',1,'#',Instruction.MOVE_LEFT));
 		
-		instructionSet.add(new TuringInstruction(2147483647,'_',2147483647,'_',Instruction.MOVE_LEFT));
-		instructionSet.add(new TuringInstruction(2147483647,'#',0,'#',Instruction.MOVE_RIGHT));
+		instructionSet.add(new TuringInstruction(1,'_',1,'_',Instruction.MOVE_LEFT));
+		instructionSet.add(new TuringInstruction(1,'#',0,'#',Instruction.MOVE_RIGHT));
 	}
 	
 	public void insertColumns(int position,int count) throws TuringException
@@ -252,72 +252,18 @@ public class TestSimulator implements Simulator {
 		while(true)
 		{
 			while(!paused)
-			{
-				//Find instruction
-				currentInstruction=null;
-				for(Instruction i : instructionSet)
-				{
-					if(i.getCurrentState()==currentState && i.getInputSymbol() == getTapeSymbolAt(tapeOriginX+tapeHeadColumnIndex,tapeOriginY+tapeHeadRowIndex))
-					{
-						currentInstruction = i;
-					}
-				}
-				
+			{			
+				findCurrentInstruction();
 				if(currentInstruction!=null)
 				{
+					executeCurrentInstruction();
 					try
 					{
-						//Update symbol and state
-						this.setTapeCellSymbol(currentInstruction.getOutputSymbol(), tapeHeadRowIndex, tapeHeadColumnIndex);
-						currentState = currentInstruction.getNextState();
-						
-						//Move the tape head
-						switch(currentInstruction.getDirection())
-						{
-						case Instruction.MOVE_LEFT:
-							tapeHeadColumnIndex--;
-							break;
-						case Instruction.MOVE_RIGHT:
-							tapeHeadColumnIndex++;
-							break;
-						default:
-							System.out.println("ERROR!");
-							break;
-						}
-						
-						//Check if tape head is still inside the tape data structure
-						if(tapeHeadRowIndex<0)
-						{
-							insertRows(Simulator.BEFORE,1);
-						}
-						else if(tapeHeadRowIndex>tape.size())
-						{
-							insertRows(Simulator.AFTER,1);
-						}
-						
-						if(tapeHeadColumnIndex<0)
-						{
-							insertColumns(Simulator.BEFORE,1);
-						}
-						else if(tapeHeadColumnIndex>tape.get(0).size())
-						{
-							insertColumns(Simulator.AFTER,1);
-						}
-						
-						gui.update();
-					
-						try
-						{
-							Thread.sleep(sleep);
-						}
-						catch (InterruptedException ex)
-						{
-							Main.err.displayError(ex);
-						}
+						Thread.sleep(sleep);
 					}
-					catch(TuringException ex)
+					catch(InterruptedException ex)
 					{
-						Main.err.displayError(ex);
+						System.out.println("Simulation was woken up!");
 					}
 				}
 				else
@@ -404,5 +350,110 @@ public class TestSimulator implements Simulator {
 		printTape();
 		
 		System.out.println("\nTape Origin: ("+tapeOriginX+","+tapeOriginY+") Value: "+tape.get(tapeOriginY).get(tapeOriginX));
+	}
+
+	@Override
+	public boolean pause()
+	{
+		paused=true;
+		return true;
+	}
+
+	@Override
+	public boolean play()
+	{
+		synchronized(this)
+		{
+			notifyAll();
+		}
+		paused=false;
+		return true;
+	}
+
+	@Override
+	public void step()
+	{
+		if(paused)
+		{
+			findCurrentInstruction();
+			if(currentInstruction!=null)
+			{
+				executeCurrentInstruction();
+			}
+		}
+	}
+
+	private void executeCurrentInstruction()
+	{
+		try
+		{
+			//Update symbol and state
+			this.setTapeCellSymbol(currentInstruction.getOutputSymbol(), tapeHeadRowIndex, tapeHeadColumnIndex);
+			currentState = currentInstruction.getNextState();
+			
+			//Move the tape head
+			switch(currentInstruction.getDirection())
+			{
+			case Instruction.MOVE_LEFT:
+				tapeHeadColumnIndex--;
+				break;
+			case Instruction.MOVE_RIGHT:
+				tapeHeadColumnIndex++;
+				break;
+			default:
+				System.out.println("ERROR!");
+				break;
+			}
+			
+			//Check if tape head is still inside the tape data structure
+			if(tapeHeadRowIndex<0)
+			{
+				insertRows(Simulator.BEFORE,1);
+			}
+			else if(tapeHeadRowIndex>tape.size())
+			{
+				insertRows(Simulator.AFTER,1);
+			}
+			
+			if(tapeHeadColumnIndex<0)
+			{
+				insertColumns(Simulator.BEFORE,1);
+			}
+			else if(tapeHeadColumnIndex>tape.get(0).size())
+			{
+				insertColumns(Simulator.AFTER,1);
+			}
+			
+			gui.update();
+		}
+		catch(TuringException ex)
+		{
+			Main.err.displayError(ex);
+		}
+	}
+
+	private Instruction findCurrentInstruction()
+	{
+		currentInstruction=null;
+		for(Instruction i : instructionSet)
+		{
+			if(i.getCurrentState()==currentState && i.getInputSymbol() == getTapeSymbolAt(tapeOriginX+tapeHeadColumnIndex,tapeOriginY+tapeHeadRowIndex))
+			{
+				currentInstruction = i;
+			}
+		}
+		return currentInstruction;
+	}
+
+	@Override
+	public boolean isPaused()
+	{
+		return paused;
+	}
+
+	@Override
+	public void setSpeed(int value)
+	{
+		this.sleep=value;
 	}
 }

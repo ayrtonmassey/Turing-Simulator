@@ -39,11 +39,6 @@ public class InstructionPanel extends JComponent {
 			this.setOpaque(true);
 			this.setBackground(Color.PINK);
 		}
-		
-		history.add(new TuringInstruction(0,'a',1,'a',Instruction.MOVE_LEFT));
-		history.add(new TuringInstruction(100,'a',89,'a',Instruction.MOVE_LEFT));
-		history.add(new TuringInstruction(923,'d',14,'1',Instruction.MOVE_RIGHT));
-		history.add(new TuringInstruction(1781,'c',2,'8',Instruction.HALT));
 	}
 	
 	/**
@@ -173,7 +168,10 @@ public class InstructionPanel extends JComponent {
 			history.add(i);
 			if(history.size()>GUI.INSTRUCTION_HISTORY_LIMIT)
 			{
-				history.remove(0);
+				for(int j=history.size();j>50;j--)
+				{
+					history.remove(0);
+				}
 			}
 			repaint();
 		}

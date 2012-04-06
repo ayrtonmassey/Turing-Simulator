@@ -3,9 +3,15 @@ package turing.interfaces;
 import java.awt.Color;
 import java.awt.Font;
 
+import javax.swing.BorderFactory;
+import javax.swing.border.Border;
+
 
 public interface GUI {
 
+	public static final Border TOP_BORDER = BorderFactory.createCompoundBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(210,210,210)),
+																				BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(255,255,255)));
+	
 	public static final int TAPE_COLUMNS_TO_DISPLAY=11,
 							TAPE_ROWS_TO_DISPLAY=8,
 							INSTRUCTIONS_TO_DISPLAY=3;
@@ -37,5 +43,10 @@ public interface GUI {
 	 * so that the GUI displays the current state, tape contents etc.
 	 */
 	public void update();
+
+	public void updateTapeDisplayCoordinates(int tapeBeginRowIndex,
+			int tapeEndRowIndex, int tapeBeginColumnIndex,
+			int tapeEndColumnIndex);
+	
 	
 }

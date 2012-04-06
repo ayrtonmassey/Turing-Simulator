@@ -22,6 +22,8 @@ public class TuringGUI extends JFrame implements GUI {
 	
 	TapePanel tape;
 	InstructionPanel instruction;
+	ControlPanel control;
+	StatusPanel status;
 	
 	/**
 	 * Creates a new GUI for the Turing machine simulator.
@@ -75,10 +77,10 @@ public class TuringGUI extends JFrame implements GUI {
 		
 		instruction = new InstructionPanel(this);
 			gc.fill=GridBagConstraints.NONE;
-			gc.gridx=4;
+			gc.gridx=3;
 			gc.gridy=0;
 			gc.gridwidth=1;
-			gc.gridheight=3;
+			gc.gridheight=4;
 			gc.weightx=0;
 			gc.weighty=1;
 			gc.anchor=GridBagConstraints.NORTH;
@@ -94,6 +96,28 @@ public class TuringGUI extends JFrame implements GUI {
 			gc.weighty=1;
 			gc.anchor=GridBagConstraints.CENTER;
 		this.add(tape,gc);
+		
+		control = new ControlPanel(this);
+			gc.fill=GridBagConstraints.HORIZONTAL;
+			gc.gridx=0;
+			gc.gridy=4;
+			gc.gridwidth=3;
+			gc.gridheight=1;
+			gc.weightx=1;
+			gc.weighty=0;
+			gc.anchor=GridBagConstraints.SOUTH;
+		this.add(control,gc);
+		
+		status = new StatusPanel(this);
+			gc.fill=GridBagConstraints.HORIZONTAL;
+			gc.gridx=0;
+			gc.gridy=5;
+			gc.gridwidth=4;
+			gc.gridheight=1;
+			gc.weightx=1;
+			gc.weighty=0;
+			gc.anchor=GridBagConstraints.SOUTH;
+		this.add(status,gc);
 	}
 
 	/**
@@ -115,5 +139,13 @@ public class TuringGUI extends JFrame implements GUI {
 	{
 		tape.update();
 		instruction.update();
+		
+		status.updateTapeHeadCoordinates(sim.getTapeHeadRowIndex(), sim.getTapeHeadColumnIndex());
+	}
+
+	@Override
+	public void updateTapeDisplayCoordinates(int tapeBeginRowIndex, int tapeEndRowIndex, int tapeBeginColumnIndex, int tapeEndColumnIndex)
+	{
+		status.updateTapeDisplayCoordinatess(tapeBeginRowIndex, tapeEndRowIndex, tapeBeginColumnIndex, tapeEndColumnIndex);
 	}
 }
