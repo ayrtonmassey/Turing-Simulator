@@ -3,11 +3,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 
-import turing.Main;
 import turing.TuringException;
 import turing.gui.TuringGUI;
 import turing.interfaces.GUI;
@@ -43,170 +39,71 @@ public class TuringSimulator implements Simulator {
 	private int tapeOriginY;
 
 	private int tapeHeadRowIndex;
-	
+
+       
+
+
+        /**
+         * simulator
+         *  every time you carry out an instruction(after instruction), call gui.update();
+         * use carryOutInstruction as a guide.
+         */
 	public void run()
 	{
-		gui = new TuringGUI(this);
-		
-		init();
-		
-		//testTapeSetValueAt();
-		
-		gui.update();
-		
-		//*
-		while(true)
-		{
-			while(!paused)
-			{
-				//Find instruction
-				currentInstruction=null;
-				for(Instruction i : instructionSet)
-				{
-					if(i.getCurrentState()==currentState && i.getInputSymbol() == getTapeSymbolAt(tapeOriginX+tapeHeadColumnIndex,tapeOriginY+tapeHeadRowIndex))
-					{
-						currentInstruction = i;
-					}
-				}
-				
-				if(currentInstruction!=null)
-				{
-					try
-					{
-						//Update symbol and state
-						this.setTapeCellSymbol(currentInstruction.getOutputSymbol(), tapeHeadRowIndex, tapeHeadColumnIndex);
-						currentState = currentInstruction.getNextState();
-						
-						//Move the tape head
-						switch(currentInstruction.getDirection())
-						{
-						case Instruction.MOVE_LEFT:
-							tapeHeadColumnIndex--;
-							break;
-						case Instruction.MOVE_RIGHT:
-							tapeHeadColumnIndex++;
-							break;
-						default:
-							System.out.println("ERROR!");
-							break;
-						}
-						
-						//Check if tape head is still inside the tape data structure
-						if(tapeHeadRowIndex<0)
-						{
-							insertRows(Simulator.BEFORE,1);
-						}
-						else if(tapeHeadRowIndex>tape.size())
-						{
-							insertRows(Simulator.AFTER,1);
-						}
-						
-						if(tapeHeadColumnIndex<0)
-						{
-							insertColumns(Simulator.BEFORE,1);
-						}
-						else if(tapeHeadColumnIndex>tape.get(0).size())
-						{
-							insertColumns(Simulator.AFTER,1);
-						}
-						
-						gui.update();
-					
-						try
-						{
-							Thread.sleep(sleep);
-						}
-						catch (InterruptedException ex)
-						{
-							Main.err.displayError(ex);
-						}
-					}
-					catch(TuringException ex)
-					{
-						Main.err.displayError(ex);
-					}
-				}
-				else
-				{
-					//Pause the simulator and display error message
-					paused=true;
-					JOptionPane.showMessageDialog(null, "No instruction specified for current symbol and state.");
-				}
-			}
-		}//*/
+                     init();
+		 gui = new TuringGUI(this);
+
+        boolean running = true;
+        while (running) {
+
+
+            char currentSymbol =getTapeSymbolAt(tapeHeadRowIndex,tapeHeadColumnIndex);
+
+            Instruction toExecute = null;
+            for (Instruction i : instructions) (not looking in Instruction class) {
+                if (i.currentState == currentState && i.inputSymbol == currentSymbol) {
+                    toExecute = i;
+                }
+            }
+
+            if (toExecute != null) {
+
+                currentState = toExecute.nextState;
+                tape[tapeHeadColumnIndex] = toExecute.outputSymbol;
+                switch (toExecute.direction) {
+                    case Instruction.MOVE_LEFT  (Should be DIRECTION_LEFT):
+                        tapeHeadColumnIndex--;
+                        gui.update();
+                        break;
+                    case Instruction.MOVE_RIGHT:
+                        tapeHeadColumnIndex++;
+                        gui.update();
+                        break;
+                    case Instruction.HALT:
+                        gui.update();
+
+                        running = false;
+                        break;
+                    default:
+                        break;
+                }
+            } else {
+                //throw error
+            }
+        }
 	}
 	
-	public void testTapeSetValueAt()
-	{
-		System.out.println("\nTape Origin: ("+tapeOriginX+","+tapeOriginY+") Value: "+tape.get(tapeOriginY).get(tapeOriginX));
-		
-		try
-		{
-			setTapeCellSymbol('a', 0, 0);
-			setTapeCellSymbol('b', 0, 4);
-			setTapeCellSymbol('c', 0, -1);
-			setTapeCellSymbol('d', 0, -10);
-			setTapeCellSymbol('e', 0, 15);
-			setTapeCellSymbol('f', 0, 21);
-			setTapeCellSymbol('g',-1,0);
-			setTapeCellSymbol('h',1,0);
-			setTapeCellSymbol('i',10,0);
-			setTapeCellSymbol('j',-5,0);
-			setTapeCellSymbol('k',1,1);
-			setTapeCellSymbol('l',-1,-1);
-		}
-		catch(TuringException ex)
-		{
-			Main.err.displayError(ex);
-		}
-		
-		System.out.println("\nNEW TAPE:");
-		printTape();
-		
-		System.out.println("\nTape Origin: ("+tapeOriginX+","+tapeOriginY+") Value: "+tape.get(tapeOriginY).get(tapeOriginX));
-	}
 	
+	/**
+         * initialise
+         */
 	public void init()
 	{
-		tape.add(new ArrayList<Character>());
-		try
-		{
-			this.setTapeCellSymbol('0', 0, 0);
-			this.setTapeCellSymbol('1', 0, 1);
-			this.setTapeCellSymbol('2', 0, 2);
-			this.setTapeCellSymbol('3', 0, 3);
-			this.setTapeCellSymbol('4', 0, 4);
-			this.setTapeCellSymbol('5', 0, 5);
-			this.setTapeCellSymbol('6', 0, 6);
-			this.setTapeCellSymbol('7', 0, 7);
-			this.setTapeCellSymbol('8', 0, 8);
-			this.setTapeCellSymbol('9', 0, 9);
-			this.setTapeCellSymbol('0', 0, 10);
-			this.setTapeCellSymbol('1', 0, 11);
-			this.setTapeCellSymbol('2', 0, 12);
-			this.setTapeCellSymbol('3', 0, 13);
-			this.setTapeCellSymbol('4', 0, 14);
-			this.setTapeCellSymbol('5', 0, 15);
-			
-			this.setTapeCellSymbol('#', 3, 1);
-			this.setTapeCellSymbol('#', 3, 9);
-		}
-		catch (TuringException ex)
-		{
-			Main.err.displayError(ex);
-		}
-		
-		System.out.println("INITIAL TAPE:");
-		printTape();
-		
-		tapeHeadColumnIndex = 7;
-		tapeHeadRowIndex = 3;
-		
-		instructionSet.add(new TuringInstruction(0,'_',0,'_',Instruction.MOVE_RIGHT));
-		instructionSet.add(new TuringInstruction(0,'#',2147483647,'#',Instruction.MOVE_LEFT));
-		
-		instructionSet.add(new TuringInstruction(2147483647,'_',2147483647,'_',Instruction.MOVE_LEFT));
-		instructionSet.add(new TuringInstruction(2147483647,'#',0,'#',Instruction.MOVE_RIGHT));
+   instructionSet = openfile();
+   tape=openFile();
+        
+
+
 	}
 	
 	public void printTape()

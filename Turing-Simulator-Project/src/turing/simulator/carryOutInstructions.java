@@ -23,15 +23,15 @@ public class carryOutInstructions implements Simulator {
         int currentState = 0;
 
 
-        List<Instruction> instructions = new ArrayList<Instruction>();
-        Instruction i1 = new Instruction(0, '0', 1, '1', Instruction.DIRECTION_RIGHT);
+        List<TuringInstruction> instructions = new ArrayList<TuringInstruction>();
+        TuringInstruction i1 = new TuringInstruction(0, '0', 1, '1', TuringInstruction.DIRECTION_RIGHT);
 
         instructions.add(i1);
-        Instruction i2 = new Instruction(1, '0', 0, '1', Instruction.DIRECTION_RIGHT);
+        TuringInstruction i2 = new TuringInstruction(1, '0', 0, '1', TuringInstruction.DIRECTION_RIGHT);
         instructions.add(i2);
-        Instruction i3 = new Instruction(0, '#', 2, '1', Instruction.DIRECTION_HALT);
+        TuringInstruction i3 = new TuringInstruction(0, '#', 2, '1', TuringInstruction.DIRECTION_HALT);
         instructions.add(i3);
-        Instruction i4 = new Instruction(1, '#', 2, '1', Instruction.DIRECTION_HALT);
+        TuringInstruction i4 = new TuringInstruction(1, '#', 2, '1', TuringInstruction.DIRECTION_HALT);
         instructions.add(i4);
 
         for (int i = 0; i < tape.length; i++) {
@@ -43,8 +43,8 @@ public class carryOutInstructions implements Simulator {
 
             char currentSymbol = tape[currentTapePosition];
 
-            Instruction toExecute = null;
-            for (Instruction i : instructions) {
+            TuringInstruction toExecute = null;
+            for (TuringInstruction i : instructions) {
                 if (i.currentState == currentState && i.inputSymbol == currentSymbol) {
                     toExecute = i;
                 }
