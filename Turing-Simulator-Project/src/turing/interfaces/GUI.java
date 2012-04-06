@@ -28,6 +28,8 @@ public interface GUI {
 	public static final Color TAPE_HEAD_FONT_COLOR = Color.WHITE;
 
 	public static final int INSTRUCTION_HISTORY_LIMIT = 50;
+
+	public static final int DEFAULT_NUM_ROWS = 9, DEFAULT_NUM_COLUMNS = 11;
 	
 	public boolean debugMode();
 
@@ -37,6 +39,10 @@ public interface GUI {
 	 */
 	public Simulator getSimulator();
 
+	public void reset();
+
+	public void setCenterTapeViewportOn(int x, int y);
+	
 	/**
 	 * Updates the GUI to the current state of the Turing machine.
 	 * <p>
@@ -45,8 +51,7 @@ public interface GUI {
 	 */
 	public void update();
 
-	public void updateTapeDisplayCoordinates(int tapeBeginRowIndex,
-			int tapeEndRowIndex, int tapeBeginColumnIndex,
-			int tapeEndColumnIndex);	
-	
+	public void updateStatusMessage(String message);
+
+	public void updateTapeDisplayCoordinates(int tapeBeginRowIndex, int tapeEndRowIndex, int tapeBeginColumnIndex, int tapeEndColumnIndex);
 }

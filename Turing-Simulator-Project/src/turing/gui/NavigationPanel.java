@@ -4,24 +4,33 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JPanel;
-import javax.swing.border.Border;
-
 import turing.interfaces.GUI;
+import turing.interfaces.Simulator;
 
 public class NavigationPanel extends JPanel implements ActionListener {
 
 	GUI gui;
 	TapePanel tape;
 	
+	JButton upButton;
+
+	JButton downButton;
+	JButton rightButton;
+	JButton leftButton;
+	JButton centerButton;
+	Icon upIcon;
+	
+	Icon downIcon;
+	Icon leftIcon;
+	Icon rightIcon;
+	Icon centerIcon;
 	NavigationPanel(GUI gui,TapePanel tape)
 	{
 		this.gui = gui;
@@ -35,19 +44,32 @@ public class NavigationPanel extends JPanel implements ActionListener {
 			this.setBackground(Color.CYAN);
 		}
 	}
+	
+	@Override
+	public void actionPerformed(ActionEvent e)
+	{
+		if(e.getSource().equals(upButton))
+		{
+			tape.moveViewport(TapePanel.DIRECTION_UP);
+		}
+		else if(e.getSource().equals(downButton))
+		{
+			tape.moveViewport(TapePanel.DIRECTION_DOWN);
+		}
+		else if(e.getSource().equals(leftButton))
+		{
+			tape.moveViewport(TapePanel.DIRECTION_LEFT);
+		}
+		else if(e.getSource().equals(rightButton))
+		{
+			tape.moveViewport(TapePanel.DIRECTION_RIGHT);
+		}
+		else if(e.getSource().equals(centerButton))
+		{
+			tape.setFollowTapeHead(!tape.isFollowingTapeHead());
+		}
+	}
 
-	JButton upButton;
-	JButton downButton;
-	JButton rightButton;
-	JButton leftButton;
-	JButton centerButton;
-	
-	Icon upIcon;
-	Icon downIcon;
-	Icon leftIcon;
-	Icon rightIcon;
-	Icon centerIcon;
-	
 	public void init()
 	{
 		this.setLayout(new GridBagLayout());
@@ -151,30 +173,11 @@ public class NavigationPanel extends JPanel implements ActionListener {
 			gc.weighty=0.33;
 			gc.anchor=GridBagConstraints.NORTH;
 		this.add(centerButton,gc);
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e)
-	{
-		if(e.getSource().equals(upButton))
+		
+		if(gui.getSimulator().getTape().getTapeDimension()==Simulator.ONE_DIMENSIONAL)
 		{
-			tape.moveViewport(TapePanel.DIRECTION_UP);
-		}
-		else if(e.getSource().equals(downButton))
-		{
-			tape.moveViewport(TapePanel.DIRECTION_DOWN);
-		}
-		else if(e.getSource().equals(leftButton))
-		{
-			tape.moveViewport(TapePanel.DIRECTION_LEFT);
-		}
-		else if(e.getSource().equals(rightButton))
-		{
-			tape.moveViewport(TapePanel.DIRECTION_RIGHT);
-		}
-		else if(e.getSource().equals(centerButton))
-		{
-			tape.setFollowTapeHead(!tape.isFollowingTapeHead());
+			upButton.setEnabled(false);
+			downButton.setEnabled(false);
 		}
 	}
 }

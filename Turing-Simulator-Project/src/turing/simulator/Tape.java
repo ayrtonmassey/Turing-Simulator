@@ -38,12 +38,14 @@ public class Tape {
 	 */
 	public Tape(int dimension, int tapeHeadX, int tapeHeadY)
 	{
+		tape.add(new ArrayList<Character>());
+		
+		this.dimension=dimension;
+		
 		this.originX = 0;
 		this.originY = 0;
 		this.setTapeHeadX(tapeHeadX);
 		this.setTapeHeadY(tapeHeadY);
-		
-		tape.add(new ArrayList<Character>());
 	}
 	
 	/**
@@ -76,6 +78,14 @@ public class Tape {
 	}
 	
 	/**
+	 * @return the dimension of this tape - <code>Simulator.ONE_DIMENSIONAL</code> for 1D, <code>Simulator.TWO_DIMENSIONAL</code> for 2D.
+	 */
+	public int getTapeDimension()
+	{
+		return dimension;
+	}
+	
+	/**
 	 * The column index of the tape head is equivalent to its x-coordinate if you imagine the tape as a grid.
 	 * @return the column index of the tape head on the tape.
 	 */
@@ -83,7 +93,7 @@ public class Tape {
 	{
 		return tapeHeadColumnIndex;
 	}
-	
+
 	/**
 	 * The row index of the tape head is equivalent to its y-coordinate if you imagine the tape as a grid.
 	 * @return the row index of the tape head on the tape.
@@ -92,7 +102,24 @@ public class Tape {
 	{
 		return tapeHeadRowIndex;
 	}
+	
+	/**
+	 * @return The x-coordinate of the tape head.
+	 */
+	public int getTapeHeadX()
+	{
+		return tapeHeadColumnIndex;
+	}
+	
 
+	/**
+	 * @return The x-coordinate of the tape head.
+	 */
+	public int getTapeHeadY()
+	{
+		return tapeHeadRowIndex;
+	}
+	
 	/**
 	 * Returns the original x-coordinate of the tape head.
 	 * <p>
@@ -119,7 +146,6 @@ public class Tape {
 		return originY;
 	}
 	
-
 	/**
 	 * Returns the symbol at (x,y) on the tape.
 	 * @param x The x-coordinate of the cell to return.
@@ -137,6 +163,7 @@ public class Tape {
 		}
 		return '_';
 	}
+
 	
 	private void insertColumns(int position,int count) throws TuringException
 	{
@@ -166,7 +193,7 @@ public class Tape {
 										" - use Simulator.BEFORE or Simulator.AFTER.");
 		}
 	}
-	
+
 	private void insertRows(int position, int count) throws TuringException
 	{
 		switch(position)
@@ -198,7 +225,6 @@ public class Tape {
 		return true;
 	}
 
-	
 	private List<Character> newBlankRow()
 	{
 		List<Character> blankRow = new ArrayList<Character>();
@@ -213,7 +239,7 @@ public class Tape {
 		
 		return blankRow;
 	}
-
+	
 	/**
 	 * Prints this tape in a readable format.
 	 */
@@ -283,21 +309,14 @@ public class Tape {
 			return false;
 		}
 	}
-
-	/**
-	 * @return The x-coordinate of the tape head.
-	 */
-	public int getTapeHeadX()
-	{
-		return tapeHeadColumnIndex;
-	}
 	
 	/**
-	 * @return The x-coordinate of the tape head.
+	 * Sets the dimension of the tape (1D or 2D).
+	 * @param dimension <code>Simulator.ONE_DIMENSIONAL</code> for 1D, <code>Simulator.TWO_DIMENSIONAL</code> for 2D.
 	 */
-	public int getTapeHeadY()
+	public void setTapeDimension(int dimension)
 	{
-		return tapeHeadRowIndex;
+		this.dimension = dimension;
 	}
 	
 	/**
@@ -316,11 +335,13 @@ public class Tape {
 		{
 			if(tapeHeadColumnIndex<0)
 			{
-				insertColumns(Simulator.BEFORE,1);
+				int count = 0-tapeHeadColumnIndex;
+				insertColumns(Simulator.BEFORE,count);
 			}
-			else if(tapeHeadColumnIndex>tape.get(0).size())
+			else if(tapeHeadColumnIndex>=tape.get(tapeHeadRowIndex).size())
 			{
-				insertColumns(Simulator.AFTER,1);
+				int count = tapeHeadColumnIndex-(tape.get(tapeHeadRowIndex).size()-1);
+				insertColumns(Simulator.AFTER,count);
 			}
 		}
 		catch(TuringException ex)
@@ -334,7 +355,7 @@ public class Tape {
 	 * <p>
 	 * If the y-coordinate of the tape head is outside the tape's data structure,
 	 * new rows will be inserted in to the data structure and the origin adjusted.
-	 * @param x The x-coordinate of the tape head.
+	 * @param y The y-coordinate of the tape head.
 	 * @see #insertRows(int, int)
 	 */
 	public void setTapeHeadY(int y)
@@ -345,34 +366,19 @@ public class Tape {
 		{
 			if(tapeHeadRowIndex<0)
 			{
-				insertRows(Simulator.BEFORE,1);
+				int count = 0-tapeHeadRowIndex;
+				insertRows(Simulator.BEFORE,count);
 			}
-			else if(tapeHeadRowIndex>tape.size())
+			else if(tapeHeadRowIndex>=tape.size())
 			{
-				insertRows(Simulator.AFTER,1);
+				int count = tapeHeadRowIndex-(tape.size()-1);
+				insertRows(Simulator.AFTER,count);
 			}
 		}
 		catch(TuringException ex)
 		{
 			Main.err.displayError(ex);
 		}
-	}
-	
-	/**
-	 * Sets the dimension of the tape (1D or 2D).
-	 * @param dimension <code>Simulator.ONE_DIMENSIONAL</code> for 1D, <code>Simulator.TWO_DIMENSIONAL</code> for 2D.
-	 */
-	public void setTapeDimension(int dimension)
-	{
-		this.dimension = dimension;
-	}
-	
-	/**
-	 * @return the dimension of this tape - <code>Simulator.ONE_DIMENSIONAL</code> for 1D, <code>Simulator.TWO_DIMENSIONAL</code> for 2D.
-	 */
-	public int getTapeDimension()
-	{
-		return dimension;
 	}
 	
 }

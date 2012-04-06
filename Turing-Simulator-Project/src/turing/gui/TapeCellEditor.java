@@ -26,6 +26,7 @@ public class TapeCellEditor extends AbstractCellEditor implements TableCellEdito
 	int row;
 	
 	int column;
+	
 	/**
 	 * Creates a new TapeCellEditor.
 	 * @param textField The JTextField to use as the editor component.

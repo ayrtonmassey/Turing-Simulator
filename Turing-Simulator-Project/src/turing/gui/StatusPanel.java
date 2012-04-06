@@ -1,11 +1,9 @@
 package turing.gui;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
-import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -15,6 +13,10 @@ public class StatusPanel extends JPanel {
 
 	GUI gui;
 	
+	JLabel statusLabel = new JLabel();
+	
+	JLabel tapeHeadCoordinates = new JLabel();
+	JLabel tapeDisplayCoordinates = new JLabel();
 	StatusPanel(GUI gui)
 	{
 		this.gui = gui;
@@ -27,10 +29,6 @@ public class StatusPanel extends JPanel {
 			this.setBackground(Color.MAGENTA);
 		}
 	}
-	
-	JLabel statusLabel = new JLabel();
-	JLabel tapeHeadCoordinates = new JLabel();
-	JLabel tapeDisplayCoordinates = new JLabel();
 	public void init()
 	{
 		this.setLayout(new GridBagLayout());
@@ -75,14 +73,14 @@ public class StatusPanel extends JPanel {
 		statusLabel.setText(status);
 	}
 	
-	public void updateTapeHeadCoordinates(int row,int col)
-	{
-		tapeHeadCoordinates.setText("Tape Head: ("+col+","+row+")");
-	}
-	
 	public void updateTapeDisplayCoordinatess(int beginRowIndex,int endRowIndex,int beginColumnIndex,int endColumnIndex)
 	{
 		tapeDisplayCoordinates.setText("Tape Viewport: ("+beginColumnIndex+","+beginRowIndex+") to ("+endColumnIndex+","+endRowIndex+")");
+	}
+	
+	public void updateTapeHeadCoordinates(int row,int col)
+	{
+		tapeHeadCoordinates.setText("Tape Head: ("+col+","+row+")");
 	}
 	
 }

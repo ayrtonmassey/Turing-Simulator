@@ -27,7 +27,7 @@ public class TestSimulator implements Simulator {
 	
 	private Instruction currentInstruction;
 	
-
+	private List<Instruction> history = new ArrayList<Instruction>();
 	
 	private int currentState = 0;
 	
@@ -36,27 +36,119 @@ public class TestSimulator implements Simulator {
 	private boolean paused = true;
 
 	
+	Tape tape;
+	
 	public TestSimulator()
 	{
 		run();
 	}
 	
+	private void executeCurrentInstruction()
+	{
+		try
+		{
+			//Update history
+			history.add(currentInstruction);
+			
+			if(history.size()>Simulator.HISTORY_SIZE_LIMIT)
+			{
+				history.remove(0);
+			}
+			
+			//Update symbol and state
+			tape.setTapeCellSymbol(currentInstruction.getOutputSymbol(), tape.getTapeHeadX(), tape.getTapeHeadY());
+			currentState = currentInstruction.getNextState();
+			
+			//Move the tape head
+			switch(currentInstruction.getDirection())
+			{
+			case Instruction.MOVE_LEFT:
+				tape.setTapeHeadX(tape.getTapeHeadX()-1);
+				break;
+			case Instruction.MOVE_RIGHT:
+				tape.setTapeHeadX(tape.getTapeHeadX()+1);
+				break;
+			default:
+				System.out.println("ERROR!");
+				break;
+			}
+		}
+		catch(TuringException ex)
+		{
+			Main.err.displayError(ex);
+		}
+	}
+	
+	private Instruction findCurrentInstruction()
+	{
+		currentInstruction=null;
+		for(Instruction i : instructionSet)
+		{
+			if(i.getCurrentState()==currentState && i.getInputSymbol() == tape.getTapeSymbolAt(tape.getTapeHeadX(),tape.getTapeHeadY()))
+			{
+				currentInstruction = i;
+			}
+		}
+		return currentInstruction;
+	}
+
 	@Override
 	public Instruction getCurrentInstruction()
 	{
 		return currentInstruction;
 	}
+
 	
-	@Override
+
+    @Override
 	public int getCurrentState()
 	{
 		//TODO: FILL THIS IN
 		return currentState;
 	}
-	
+
+	@Override
+	public List<Instruction> getHistory()
+	{
+		return history;
+	}
+
+	@Override
+	public Tape getTape()
+	{
+		return tape;
+	}
+
 	public void init()
 	{
-		tape = new Tape(0,0);
+		initTestTape();
+		
+		initTestInstructions();
+		
+		System.out.println("INITIAL TAPE:");
+		tape.print();
+	}
+
+	public void initTape(int dimension)
+	{
+		tape = new Tape(dimension,0,0);
+		
+		System.out.println("NEW FILE TAPE:");
+		tape.print();
+	}
+
+	public void initTestInstructions()
+	{
+		instructionSet.add(new TuringInstruction(0,'_',0,'_',Instruction.MOVE_RIGHT));
+		instructionSet.add(new TuringInstruction(0,'#',1,'#',Instruction.MOVE_LEFT));
+		
+		instructionSet.add(new TuringInstruction(1,'_',1,'_',Instruction.MOVE_LEFT));
+		instructionSet.add(new TuringInstruction(1,'#',0,'#',Instruction.MOVE_RIGHT));
+	}
+
+	public void initTestTape()
+	{
+		tape = new Tape(Simulator.TWO_DIMENSIONAL,0,0);
 		tape.setTapeHeadX(3);
 		tape.setTapeHeadY(3);
 		
@@ -86,26 +178,52 @@ public class TestSimulator implements Simulator {
 		{
 			Main.err.displayError(ex);
 		}
-		
-		System.out.println("INITIAL TAPE:");
-		tape.print();
-		
-		instructionSet.add(new TuringInstruction(0,'_',0,'_',Instruction.MOVE_RIGHT));
-		instructionSet.add(new TuringInstruction(0,'#',1,'#',Instruction.MOVE_LEFT));
-		
-		instructionSet.add(new TuringInstruction(1,'_',1,'_',Instruction.MOVE_LEFT));
-		instructionSet.add(new TuringInstruction(1,'#',0,'#',Instruction.MOVE_RIGHT));
+	}
+
+	@Override
+	public boolean isPaused()
+	{
+		return paused;
+	}
+
+	@Override
+	public void openFile(File f, int dimension) throws TuringException
+	{
+		this.reset(dimension);
+		this.initTestTape();
+		this.initTestInstructions();
 	}
 	
 	@Override
-    public void openFile(File f) throws TuringException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+	public boolean pause()
+	{
+		paused=true;
+		return true;
+	}
 
+	@Override
+	public boolean play()
+	{
+		synchronized(this)
+		{
+			notifyAll();
+		}
+		paused=false;
+		return true;
+	}
+	
+	@Override
+	public void reset(int dimension)
+	{
+		this.paused=true;
+		this.currentState=0;
+		this.history.clear();
+		this.instructionSet=new ArrayList<Instruction>();
+		this.initTape(dimension);
+	}
+	
 	public void run()
 	{
-		//gui = new TuringGUI(this);
-		
 		init();
 		
 		gui = new TuringGUI(this);
@@ -119,34 +237,53 @@ public class TestSimulator implements Simulator {
 		{
 			while(!paused)
 			{			
-				findCurrentInstruction();
-				if(currentInstruction!=null)
+				step();
+				
+				try
 				{
-					executeCurrentInstruction();
-					try
-					{
-						Thread.sleep(sleep);
-					}
-					catch(InterruptedException ex)
-					{
-						System.out.println("Simulation was woken up!");
-					}
+					Thread.sleep(sleep);
 				}
-				else
+				catch(InterruptedException ex)
 				{
-					//Pause the simulator and display error message
-					paused=true;
-					JOptionPane.showMessageDialog(null, "No instruction specified for current symbol and state.");
+					System.out.println("Simulation was woken up!");
 				}
 			}
 		}//*/
 	}
 
-	
-
-    public void testTapeSetValueAt()
+	@Override
+	public void saveFile(File f) throws TuringException
 	{
-    	System.out.println("\nTape Origin: ("+tape.getTapeOriginX()+","+tape.getTapeOriginY()+") Value: "+tape.getTapeSymbolAt(tape.getTapeOriginX(), tape.getTapeOriginY()));
+		// TODO Auto-generated method stub
+		System.out.println("Save File Option");
+	}
+	
+	@Override
+	public void setSpeed(int value)
+	{
+		this.sleep=value;
+	}
+
+	@Override
+	public void step()
+	{
+		findCurrentInstruction();
+		if(currentInstruction!=null)
+		{
+			executeCurrentInstruction();
+		}
+		else
+		{
+			//Pause the simulator and display error message
+			paused=true;
+			JOptionPane.showMessageDialog(null, "No instruction specified for current symbol and state.");
+		}
+		gui.update();
+	}
+
+	public void testTapeSetValueAt()
+	{
+    	System.out.println("\nTape Origin: ("+tape.getTapeOriginX()+","+tape.getTapeOriginY()+") Value: "+tape.getTapeSymbolAt(0, 0));
     	
 		try
 		{
@@ -171,100 +308,6 @@ public class TestSimulator implements Simulator {
 		System.out.println("\nNEW TAPE:");
 		tape.print();
 		
-		System.out.println("\nTape Origin: ("+tape.getTapeOriginX()+","+tape.getTapeOriginY()+") Value: "+tape.getTapeSymbolAt(tape.getTapeOriginX(), tape.getTapeOriginY()));
-	}
-
-	@Override
-	public boolean pause()
-	{
-		paused=true;
-		return true;
-	}
-
-	@Override
-	public boolean play()
-	{
-		synchronized(this)
-		{
-			notifyAll();
-		}
-		paused=false;
-		return true;
-	}
-
-	@Override
-	public void step()
-	{
-		if(paused)
-		{
-			findCurrentInstruction();
-			if(currentInstruction!=null)
-			{
-				executeCurrentInstruction();
-			}
-		}
-	}
-
-	private void executeCurrentInstruction()
-	{
-		try
-		{
-			//Update symbol and state
-			tape.setTapeCellSymbol(currentInstruction.getOutputSymbol(), tape.getTapeHeadX(), tape.getTapeHeadY());
-			currentState = currentInstruction.getNextState();
-			
-			//Move the tape head
-			switch(currentInstruction.getDirection())
-			{
-			case Instruction.MOVE_LEFT:
-				tape.setTapeHeadX(tape.getTapeHeadX()-1);
-				break;
-			case Instruction.MOVE_RIGHT:
-				tape.setTapeHeadX(tape.getTapeHeadX()+1);
-				break;
-			default:
-				System.out.println("ERROR!");
-				break;
-			}
-			
-			gui.update();
-		}
-		catch(TuringException ex)
-		{
-			Main.err.displayError(ex);
-		}
-	}
-
-	private Instruction findCurrentInstruction()
-	{
-		currentInstruction=null;
-		for(Instruction i : instructionSet)
-		{
-			if(i.getCurrentState()==currentState && i.getInputSymbol() == tape.getTapeSymbolAt(tape.getTapeHeadX(),tape.getTapeHeadY()))
-			{
-				currentInstruction = i;
-			}
-		}
-		return currentInstruction;
-	}
-
-	@Override
-	public boolean isPaused()
-	{
-		return paused;
-	}
-
-	@Override
-	public void setSpeed(int value)
-	{
-		this.sleep=value;
-	}
-
-	Tape tape;
-	
-	@Override
-	public Tape getTape()
-	{
-		return tape;
+		System.out.println("\nTape Origin: ("+tape.getTapeOriginX()+","+tape.getTapeOriginY()+") Value: "+tape.getTapeSymbolAt(0, 0));
 	}
 }

@@ -1,11 +1,9 @@
 package turing.gui;
 
-import turing.simulator.TuringInstruction;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -16,8 +14,6 @@ import turing.interfaces.GUI;
 
 public class InstructionPanel extends JComponent {
 
-	List<Instruction> history = new ArrayList<Instruction>();
-	
 	GUI gui;
 	
 	int yOffset=GUI.INSTRUCTION_FONT.getSize()/2;
@@ -158,12 +154,11 @@ public class InstructionPanel extends JComponent {
 			g.fillRect(0,0,this.getWidth(),this.getHeight());
 		}
 		
-		synchronized(history)
+		List<Instruction> history = gui.getSimulator().getHistory();
+		
+		for(int i=history.size()-1, count=0; i>=0 && count<GUI.INSTRUCTIONS_TO_DISPLAY; i--, count++)
 		{
-			for(int i=history.size()-1, count=0; i>=0 && count<GUI.INSTRUCTIONS_TO_DISPLAY; i--, count++)
-			{
-				drawInstruction(g, history.get(i),count);
-			}
+			drawInstruction(g, history.get(i),count);
 		}
 	}
 	
@@ -172,22 +167,7 @@ public class InstructionPanel extends JComponent {
 	 */
 	public void update()
 	{
-		Instruction i = gui.getSimulator().getCurrentInstruction();
-		if(i!=null)
-		{
-			synchronized(history)
-			{
-				history.add(i);
-				if(history.size()>GUI.INSTRUCTION_HISTORY_LIMIT)
-				{
-					for(int j=history.size();j>50;j--)
-					{
-						history.remove(0);
-					}
-				}
-			}
-			repaint();
-		}
+		repaint();
 	}
 	
 }

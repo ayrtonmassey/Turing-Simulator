@@ -7,7 +7,6 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -24,6 +23,13 @@ public class ControlPanel extends JPanel implements ActionListener,ChangeListene
 
 	GUI gui;
 	
+	JButton playButton;
+	
+	Icon playIcon;
+		Icon pauseIcon;
+		JButton stepButton;
+	Icon stepIcon;
+		JSlider speedSlider;
 	ControlPanel(GUI gui)
 	{
 		this.gui = gui;
@@ -37,13 +43,37 @@ public class ControlPanel extends JPanel implements ActionListener,ChangeListene
 		}
 	}
 	
-	JButton playButton;
-		Icon playIcon;
-		Icon pauseIcon;
-	JButton stepButton;
-		Icon stepIcon;
-	JSlider speedSlider;
-	
+	@Override
+	public void actionPerformed(ActionEvent e)
+	{
+		if(e.getSource().equals(playButton))
+		{
+			if(gui.getSimulator().isPaused())
+			{
+				if(gui.getSimulator().play())
+				{
+					playButton.setIcon(pauseIcon);
+					stepButton.setEnabled(false);
+				}
+			}
+			else
+			{
+				if(gui.getSimulator().pause())
+				{
+					playButton.setIcon(playIcon);
+					stepButton.setEnabled(true);
+				}
+			}
+		}
+		else if(e.getSource().equals(stepButton))
+		{
+			if(gui.getSimulator().isPaused())
+			{
+				gui.getSimulator().step();
+			}
+		}
+	}
+
 	public void init()
 	{	
 		this.setLayout(new GridBagLayout());
@@ -133,34 +163,17 @@ public class ControlPanel extends JPanel implements ActionListener,ChangeListene
 		}
 	}
 
-	@Override
-	public void actionPerformed(ActionEvent e)
+	public void update()
 	{
-		if(e.getSource().equals(playButton))
+		if(gui.getSimulator().isPaused())
 		{
-			if(gui.getSimulator().isPaused())
-			{
-				if(gui.getSimulator().play())
-				{
-					playButton.setIcon(pauseIcon);
-					stepButton.setEnabled(false);
-				}
-			}
-			else
-			{
-				if(gui.getSimulator().pause())
-				{
-					playButton.setIcon(playIcon);
-					stepButton.setEnabled(true);
-				}
-			}
+			playButton.setIcon(playIcon);
+			stepButton.setEnabled(true);
 		}
-		else if(e.getSource().equals(stepButton))
+		else
 		{
-			if(gui.getSimulator().isPaused())
-			{
-				gui.getSimulator().step();
-			}
+			playButton.setIcon(pauseIcon);
+			stepButton.setEnabled(false);
 		}
 	}
 	
