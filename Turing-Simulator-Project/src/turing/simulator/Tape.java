@@ -19,17 +19,29 @@ public class Tape {
 	
 	private int tapeHeadRowIndex;
 	
-	public Tape(int originX, int originY)
+	int dimension;
+	
+	/**
+	 * Creates a new Tape.
+	 * @param dimension The dimension of this tape - <code>Simulator.ONE_DIMENSIONAL</code> for 1D, <code>Simulator.TWO_DIMENSIONAL</code> for 2D.
+	 */
+	public Tape(int dimension)
 	{
-		this(originX,originY,originX,originY);
+		this(dimension,0,0);
 	}
 	
-	public Tape(int originX,int originY, int tapeHeadX, int tapeHeadY)
+	/**
+	 * Creates a new tape.
+	 * @param dimension The dimension of this tape - <code>Simulator.ONE_DIMENSIONAL</code> for 1D, <code>Simulator.TWO_DIMENSIONAL</code> for 2D.
+	 * @param tapeHeadX The x-coordinate of the tape head.
+	 * @param tapeHeadY The y-coordinate of the tape head.
+	 */
+	public Tape(int dimension, int tapeHeadX, int tapeHeadY)
 	{
-		this.originX = originX;
-		this.originY = originY;
-		this.tapeHeadColumnIndex = tapeHeadX;
-		this.tapeHeadRowIndex = tapeHeadY;
+		this.originX = 0;
+		this.originY = 0;
+		this.setTapeHeadX(tapeHeadX);
+		this.setTapeHeadY(tapeHeadY);
 		
 		tape.add(new ArrayList<Character>());
 	}
@@ -108,6 +120,12 @@ public class Tape {
 	}
 	
 
+	/**
+	 * Returns the symbol at (x,y) on the tape.
+	 * @param x The x-coordinate of the cell to return.
+	 * @param y The y-coordinate of the cell to return.
+	 * @return The symbol contained in the cell at (x,y) as a {@link Character}.
+	 */
 	public Character getTapeSymbolAt(int x, int y)
 	{
 		if(y+originY<tape.size()&&y+originY>=0)
@@ -120,7 +138,7 @@ public class Tape {
 		return '_';
 	}
 	
-	public void insertColumns(int position,int count) throws TuringException
+	private void insertColumns(int position,int count) throws TuringException
 	{
 		switch(position)
 		{
@@ -149,7 +167,7 @@ public class Tape {
 		}
 	}
 	
-	public void insertRows(int position, int count) throws TuringException
+	private void insertRows(int position, int count) throws TuringException
 	{
 		switch(position)
 		{
@@ -180,6 +198,7 @@ public class Tape {
 		return true;
 	}
 
+	
 	private List<Character> newBlankRow()
 	{
 		List<Character> blankRow = new ArrayList<Character>();
@@ -195,6 +214,9 @@ public class Tape {
 		return blankRow;
 	}
 
+	/**
+	 * Prints this tape in a readable format.
+	 */
 	public void print()
 	{
 		for(int i = 0;i<tape.size();i++)
@@ -262,16 +284,30 @@ public class Tape {
 		}
 	}
 
+	/**
+	 * @return The x-coordinate of the tape head.
+	 */
 	public int getTapeHeadX()
 	{
 		return tapeHeadColumnIndex;
 	}
 	
+	/**
+	 * @return The x-coordinate of the tape head.
+	 */
 	public int getTapeHeadY()
 	{
 		return tapeHeadRowIndex;
 	}
 	
+	/**
+	 * Sets the x-coordinate of the tape head.
+	 * <p>
+	 * If the x-coordinate of the tape head is outside the tape's data structure,
+	 * new columns will be inserted in to the data structure and the origin adjusted.
+	 * @param x The x-coordinate of the tape head.
+	 * @see #insertColumns(int, int)
+	 */
 	public void setTapeHeadX(int x)
 	{
 		this.tapeHeadColumnIndex = x;
@@ -293,6 +329,14 @@ public class Tape {
 		}
 	}
 	
+	/**
+	 * Sets the y-coordinate of the tape head.
+	 * <p>
+	 * If the y-coordinate of the tape head is outside the tape's data structure,
+	 * new rows will be inserted in to the data structure and the origin adjusted.
+	 * @param x The x-coordinate of the tape head.
+	 * @see #insertRows(int, int)
+	 */
 	public void setTapeHeadY(int y)
 	{
 		this.tapeHeadRowIndex = y;
@@ -312,6 +356,23 @@ public class Tape {
 		{
 			Main.err.displayError(ex);
 		}
+	}
+	
+	/**
+	 * Sets the dimension of the tape (1D or 2D).
+	 * @param dimension <code>Simulator.ONE_DIMENSIONAL</code> for 1D, <code>Simulator.TWO_DIMENSIONAL</code> for 2D.
+	 */
+	public void setTapeDimension(int dimension)
+	{
+		this.dimension = dimension;
+	}
+	
+	/**
+	 * @return the dimension of this tape - <code>Simulator.ONE_DIMENSIONAL</code> for 1D, <code>Simulator.TWO_DIMENSIONAL</code> for 2D.
+	 */
+	public int getTapeDimension()
+	{
+		return dimension;
 	}
 	
 }
