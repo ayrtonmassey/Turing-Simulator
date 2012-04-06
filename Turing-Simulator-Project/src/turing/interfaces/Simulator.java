@@ -10,6 +10,7 @@ public interface Simulator {
 
 	public static final int BEFORE = 0,AFTER = 1;
 	public static final int SPEED_MIN = 0, SPEED_MAX = 1000, SPEED_INIT=500;
+	public static final int DETECT_TYPE = 0, ONE_DIMENSIONAL = 1, TWO_DIMENSIONAL = 2;
 
 	/**
 	 * @return the {@link Instruction} currently being executed by the Turing simulator.
@@ -30,9 +31,11 @@ public interface Simulator {
 	/**
 	 * Opens the given file in the simulator.
 	 * <p>
-	 * @throws TuringException if the file is invalid or an error occurs while opening the file.
+	 * This method should determine the type of the file from its extension.
+	 * @param f The file to open.
+	 * @throws TuringException if the open operation failed.
 	 */
-	public void openFile(File f) throws TuringException;
+	public void openFile(File f,int type) throws TuringException;
 
 	/**
 	 * Pauses the current simulation.
@@ -61,4 +64,19 @@ public interface Simulator {
 	 * @param value the amount of milliseconds to wait between executing instructions.
 	 */
 	public void setSpeed(int value);
+
+	/**
+	 * Resets the simulator to its original state.
+	 * <p>
+	 * This method works like a "new file" operation - it should blank the tape, reset the tape head position,
+	 * clear the current instruction etc.
+	 */
+	public void reset();
+
+	/**
+	 * Saves the current state of the simulator to the given file.
+	 * @param f The file to save to.
+	 * @throws TuringException if the save operation failed.
+	 */
+	public void saveFile(File f) throws TuringException;
 }
