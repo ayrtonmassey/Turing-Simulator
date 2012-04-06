@@ -18,7 +18,8 @@ public interface GUI {
 	
 	public static final Font TAPE_FONT=new Font("Arial",Font.BOLD,24), //Any size works nicely. Tape will resize based on font size.
 								TAPE_HEAD_FONT=new Font("Arial",Font.BOLD,16), //Some sizes may skew font. Tape head will resize based on font size.
-								INSTRUCTION_FONT=new Font("Arial",Font.BOLD,18); //Some sizes may skew font. 18, 20, 24 and 32 work quite nicely.
+								INSTRUCTION_FONT=new Font("Arial",Font.BOLD,18), //Some sizes may skew font. 18, 20, 24 and 32 work quite nicely.
+								NAVIGATION_FONT = new Font("Arial",Font.BOLD,26);
 	
 	public static final int TAPE_CELL_WIDTH=TAPE_FONT.getSize()*2,TAPE_CELL_HEIGHT=TAPE_FONT.getSize()*2;
 

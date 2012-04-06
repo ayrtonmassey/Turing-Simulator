@@ -24,7 +24,7 @@ import turing.interfaces.GUI;
 
 public class TapePanel extends JPanel implements ListSelectionListener {
 
-	public static final int TAPE_CELLS_TO_DISPLAY=10;
+	public static final int DIRECTION_UP = 0,DIRECTION_DOWN=1,DIRECTION_LEFT=2,DIRECTION_RIGHT=3;
 	
 	private int ROWS_TO_DISPLAY;
 
@@ -47,7 +47,7 @@ public class TapePanel extends JPanel implements ListSelectionListener {
 	
 	Polygon headArrow;
 
-	boolean tapeHeadStatic=false;
+	boolean followTapeHead=false;
 	
 	/**
 	 * Creates a new TapePanel.
@@ -251,9 +251,7 @@ public class TapePanel extends JPanel implements ListSelectionListener {
 			gc.weightx=0;
 			gc.weighty=0;
 			gc.anchor=GridBagConstraints.CENTER;
-		//this.add(table.getTableHeader(),gc);
 		this.add(table,gc);
-		//this.add(tapeHead);
 	}
 	
 	@Override
@@ -270,11 +268,40 @@ public class TapePanel extends JPanel implements ListSelectionListener {
 	 * Updates the tape display.
 	 */
 	public void update()
-	{
-		updateTape();
-		gui.updateTapeDisplayCoordinates(tapeBeginRowIndex,tapeEndRowIndex,tapeBeginColumnIndex,tapeEndColumnIndex);
+	{	
+		updateViewport();
 	}
 
+	public void updateViewport()
+	{
+		if(followTapeHead)
+		{
+			int rowsBefore = (int)Math.floor(ROWS_TO_DISPLAY/2);
+			int rowsAfter = (int)Math.floor(ROWS_TO_DISPLAY/2);
+			if(ROWS_TO_DISPLAY%2==0)
+			{
+				rowsBefore--;
+			}
+			
+			int columnsBefore = (int)Math.floor(COLUMNS_TO_DISPLAY/2);
+			int columnsAfter = (int)Math.floor(COLUMNS_TO_DISPLAY/2);
+			if(COLUMNS_TO_DISPLAY%2==0)
+			{
+				columnsBefore--;
+			}
+			
+			tapeBeginColumnIndex = gui.getSimulator().getTape().getTapeHeadColumnIndex()-columnsBefore;
+			tapeEndColumnIndex = gui.getSimulator().getTape().getTapeHeadColumnIndex()+columnsAfter;
+			tapeBeginRowIndex = gui.getSimulator().getTape().getTapeHeadRowIndex()-rowsBefore;
+			tapeEndRowIndex = gui.getSimulator().getTape().getTapeHeadRowIndex()+rowsAfter;
+		}
+		
+		updateTape();
+		
+		gui.updateTapeDisplayCoordinates(tapeBeginRowIndex, tapeEndRowIndex, tapeBeginColumnIndex, tapeEndColumnIndex);
+		repaint();
+	}
+	
 	/**
 	 * Updates the contents of the tape.
 	 */
@@ -300,5 +327,47 @@ public class TapePanel extends JPanel implements ListSelectionListener {
 	public void valueChanged(ListSelectionEvent e)
 	{
 		repaint();
+	}
+
+	public void moveViewport(int direction)
+	{
+		switch(direction)
+		{
+		case DIRECTION_UP:
+			this.tapeBeginRowIndex--;
+			this.tapeEndRowIndex--;
+			updateViewport();
+			setFollowTapeHead(false);
+			break;
+		case DIRECTION_DOWN:
+			this.tapeBeginRowIndex++;
+			this.tapeEndRowIndex++;
+			updateViewport();
+			setFollowTapeHead(false);
+			break;
+		case DIRECTION_LEFT:
+			this.tapeBeginColumnIndex--;
+			this.tapeEndColumnIndex--;
+			updateViewport();
+			setFollowTapeHead(false);
+			break;
+		case DIRECTION_RIGHT:
+			this.tapeBeginColumnIndex++;
+			this.tapeEndColumnIndex++;
+			updateViewport();
+			setFollowTapeHead(false);
+			break;
+		}
+	}
+	
+	public void setFollowTapeHead(boolean follow)
+	{
+		followTapeHead=follow;
+		updateViewport();
+	}
+
+	public boolean isFollowingTapeHead()
+	{
+		return followTapeHead;
 	}
 }

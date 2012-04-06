@@ -24,6 +24,7 @@ public class TuringGUI extends JFrame implements GUI {
 	InstructionPanel instruction;
 	ControlPanel control;
 	StatusPanel status;
+	NavigationPanel navigation;
 	
 	/**
 	 * Creates a new GUI for the Turing machine simulator.
@@ -80,7 +81,7 @@ public class TuringGUI extends JFrame implements GUI {
 			gc.gridx=3;
 			gc.gridy=0;
 			gc.gridwidth=1;
-			gc.gridheight=4;
+			gc.gridheight=1;
 			gc.weightx=0;
 			gc.weighty=1;
 			gc.anchor=GridBagConstraints.NORTH;
@@ -118,6 +119,17 @@ public class TuringGUI extends JFrame implements GUI {
 			gc.weighty=0;
 			gc.anchor=GridBagConstraints.SOUTH;
 		this.add(status,gc);
+		
+		navigation = new NavigationPanel(this,tape);
+			gc.fill=GridBagConstraints.NONE;
+			gc.gridx=3;
+			gc.gridy=2;
+			gc.gridwidth=1;
+			gc.gridheight=1;
+			gc.weightx=0;
+			gc.weighty=0;
+			gc.anchor=GridBagConstraints.SOUTH;
+		this.add(navigation,gc);
 	}
 
 	/**
