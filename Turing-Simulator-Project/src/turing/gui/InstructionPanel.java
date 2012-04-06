@@ -49,77 +49,84 @@ public class InstructionPanel extends JComponent {
 	 */
 	private void drawInstruction(Graphics g, Instruction i, int count)
 	{
-		int xOffset=0;
-		g.setColor(this.getForeground());
-		Font INSTRUCTION_SUBSCRIPT_FONT = new Font(GUI.INSTRUCTION_FONT.getFamily(),GUI.INSTRUCTION_FONT.getStyle(),GUI.INSTRUCTION_FONT.getSize()*3/4);
-		int y = this.getHeight()-yOffset-(GUI.INSTRUCTION_FONT.getSize()*count)-lineOffset*count+1;
-		
-		String currentState = i.getCurrentState()+"";
-		
-		String inputSymbol = i.getInputSymbol()+"";
-		
-		String nextState = i.getNextState()+"";
-		
-		String outputSymbol = i.getOutputSymbol()+"";
-		
-		String direction;
-		
-		switch(i.getDirection())
+		if(i!=null)
 		{
-		case Instruction.MOVE_LEFT:
-			direction="←";
-			break;
-		case Instruction.MOVE_RIGHT:
-			direction="→";
-			break;
-		case Instruction.HALT:
-			direction="H";
-			break;
-		default:
-			direction="ERROR";
-			break;
-		}
-		
-		int instructionWidth = GUI.INSTRUCTION_FONT.getSize()+
-								(INSTRUCTION_SUBSCRIPT_FONT.getSize()*9/16)*currentState.length()+
-								GUI.INSTRUCTION_FONT.getSize()*15/8+
-								(INSTRUCTION_SUBSCRIPT_FONT.getSize()*9/16)*nextState.length();
-		
-		if(direction.equals("H"))
-		{
-			instructionWidth+=GUI.INSTRUCTION_FONT.getSize()*18/8;
+			int xOffset=0;
+			g.setColor(this.getForeground());
+			Font INSTRUCTION_SUBSCRIPT_FONT = new Font(GUI.INSTRUCTION_FONT.getFamily(),GUI.INSTRUCTION_FONT.getStyle(),GUI.INSTRUCTION_FONT.getSize()*3/4);
+			int y = this.getHeight()-yOffset-(GUI.INSTRUCTION_FONT.getSize()*count)-lineOffset*count+1;
+			
+			String currentState = i.getCurrentState()+"";
+			
+			String inputSymbol = i.getInputSymbol()+"";
+			
+			String nextState = i.getNextState()+"";
+			
+			String outputSymbol = i.getOutputSymbol()+"";
+			
+			String direction;
+			
+			switch(i.getDirection())
+			{
+			case Instruction.MOVE_LEFT:
+				direction="←";
+				break;
+			case Instruction.MOVE_RIGHT:
+				direction="→";
+				break;
+			case Instruction.HALT:
+				direction="H";
+				break;
+			default:
+				direction="ERROR";
+				break;
+			}
+			
+			int instructionWidth = GUI.INSTRUCTION_FONT.getSize()+
+									(INSTRUCTION_SUBSCRIPT_FONT.getSize()*9/16)*currentState.length()+
+									GUI.INSTRUCTION_FONT.getSize()*15/8+
+									(INSTRUCTION_SUBSCRIPT_FONT.getSize()*9/16)*nextState.length();
+			
+			if(direction.equals("H"))
+			{
+				instructionWidth+=GUI.INSTRUCTION_FONT.getSize()*18/8;
+			}
+			else
+			{
+				instructionWidth+=GUI.INSTRUCTION_FONT.getSize()*20/8;
+			}
+			
+			//Draw  (S
+			xOffset=(this.getWidth()/2)-(instructionWidth/2);		
+			g.setFont(GUI.INSTRUCTION_FONT);
+			g.drawString("(S", xOffset, y);
+			
+			//Draw current state
+			xOffset+=GUI.INSTRUCTION_FONT.getSize();
+			g.setFont(INSTRUCTION_SUBSCRIPT_FONT);
+			g.drawString(currentState, xOffset, y+(INSTRUCTION_SUBSCRIPT_FONT.getSize()/4));
+			
+			//Draw input symbol
+			xOffset+=(INSTRUCTION_SUBSCRIPT_FONT.getSize()*9/16)*currentState.length();
+			g.setFont(GUI.INSTRUCTION_FONT);
+			g.drawString(","+inputSymbol+",S", xOffset, y);
+			
+			//Draw next state
+			xOffset+=GUI.INSTRUCTION_FONT.getSize()*15/8;
+			g.setFont(INSTRUCTION_SUBSCRIPT_FONT);
+			g.drawString(nextState, xOffset, y+(INSTRUCTION_SUBSCRIPT_FONT.getSize()/4));
+			
+			//Draw
+			xOffset+=(INSTRUCTION_SUBSCRIPT_FONT.getSize()*9/16)*nextState.length();
+			
+			g.setFont(GUI.INSTRUCTION_FONT);
+			
+			g.drawString(","+outputSymbol+","+direction+")", xOffset, y);
 		}
 		else
 		{
-			instructionWidth+=GUI.INSTRUCTION_FONT.getSize()*20/8;
+			System.out.println("null instruction");
 		}
-		
-		//Draw  (S
-		xOffset=(this.getWidth()/2)-(instructionWidth/2);		
-		g.setFont(GUI.INSTRUCTION_FONT);
-		g.drawString("(S", xOffset, y);
-		
-		//Draw current state
-		xOffset+=GUI.INSTRUCTION_FONT.getSize();
-		g.setFont(INSTRUCTION_SUBSCRIPT_FONT);
-		g.drawString(currentState, xOffset, y+(INSTRUCTION_SUBSCRIPT_FONT.getSize()/4));
-		
-		//Draw input symbol
-		xOffset+=(INSTRUCTION_SUBSCRIPT_FONT.getSize()*9/16)*currentState.length();
-		g.setFont(GUI.INSTRUCTION_FONT);
-		g.drawString(","+inputSymbol+",S", xOffset, y);
-		
-		//Draw next state
-		xOffset+=GUI.INSTRUCTION_FONT.getSize()*15/8;
-		g.setFont(INSTRUCTION_SUBSCRIPT_FONT);
-		g.drawString(nextState, xOffset, y+(INSTRUCTION_SUBSCRIPT_FONT.getSize()/4));
-		
-		//Draw
-		xOffset+=(INSTRUCTION_SUBSCRIPT_FONT.getSize()*9/16)*nextState.length();
-		
-		g.setFont(GUI.INSTRUCTION_FONT);
-		
-		g.drawString(","+outputSymbol+","+direction+")", xOffset, y);
 	}
 	
 	/**
@@ -151,9 +158,12 @@ public class InstructionPanel extends JComponent {
 			g.fillRect(0,0,this.getWidth(),this.getHeight());
 		}
 		
-		for(int i=history.size()-1, count=0; i>=0 && count<GUI.INSTRUCTIONS_TO_DISPLAY; i--, count++)
+		synchronized(history)
 		{
-			drawInstruction(g, history.get(i),count);
+			for(int i=history.size()-1, count=0; i>=0 && count<GUI.INSTRUCTIONS_TO_DISPLAY; i--, count++)
+			{
+				drawInstruction(g, history.get(i),count);
+			}
 		}
 	}
 	
@@ -165,12 +175,15 @@ public class InstructionPanel extends JComponent {
 		Instruction i = gui.getSimulator().getCurrentInstruction();
 		if(i!=null)
 		{
-			history.add(i);
-			if(history.size()>GUI.INSTRUCTION_HISTORY_LIMIT)
+			synchronized(history)
 			{
-				for(int j=history.size();j>50;j--)
+				history.add(i);
+				if(history.size()>GUI.INSTRUCTION_HISTORY_LIMIT)
 				{
-					history.remove(0);
+					for(int j=history.size();j>50;j--)
+					{
+						history.remove(0);
+					}
 				}
 			}
 			repaint();
