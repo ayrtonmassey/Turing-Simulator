@@ -45,7 +45,7 @@ public class CenterViewDialog extends JFrame implements ActionListener {
 				int x = Integer.parseInt(xField.getText());
 				int y = Integer.parseInt(yField.getText());
 				
-				gui.setCenterTapeViewportOn(x,y);
+				gui.setTapeViewportCenterTo(x,y);
 				
 				this.dispose();
 			}

@@ -369,6 +369,18 @@ public class TapePanel extends JPanel implements ListSelectionListener, ActionLi
 
 	public void setFollowTapeHead(boolean follow)
 	{
+		if(followTapeHead!=follow)
+		{
+			if(follow)
+			{
+				gui.updateStatusMessage("Following tape head.");
+			}
+			else
+			{
+				gui.updateStatusMessage("Stopped following tape head.");
+			}
+		}
+		
 		followTapeHead=follow;
 		updateViewport();
 	}

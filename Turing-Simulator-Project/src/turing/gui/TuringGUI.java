@@ -5,8 +5,12 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.IOException;
 
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -48,6 +52,9 @@ public class TuringGUI extends JFrame implements GUI, ActionListener {
 				JMenuItem import2DFile;
 		JMenu viewMenu;
 			JMenuItem centerView;
+		JMenu helpMenu;
+			JMenuItem about;
+			JMenuItem help;
 	
 	/**
 	 * Creates a new GUI for the Turing machine simulator.
@@ -69,25 +76,17 @@ public class TuringGUI extends JFrame implements GUI, ActionListener {
 		{
 			createNewFile();
 		}
-		else if(e.getSource().equals(openFile) ||
-				e.getSource().equals(import1DFile) ||
-				e.getSource().equals(import2DFile))
-		{	
-			int type=-1;
-			if(e.getSource().equals(openFile))
-			{
-				type = Simulator.DETECT_TYPE;
-			}
-			else if(e.getSource().equals(import1DFile))
-			{
-				type = Simulator.ONE_DIMENSIONAL;
-			}
-			else if(e.getSource().equals(import2DFile))
-			{
-				type = Simulator.TWO_DIMENSIONAL;
-			}
-			
-			showOpenDialog(type);
+		else if(e.getSource().equals(openFile))
+		{
+			showOpenDialog(Simulator.DETECT_TYPE);
+		}
+		else if(e.getSource().equals(import1DFile))
+		{
+			showOpenDialog(Simulator.ONE_DIMENSIONAL);
+		}
+		else if(e.getSource().equals(import2DFile))
+		{
+			showOpenDialog(Simulator.TWO_DIMENSIONAL);
 		}
 		else if(e.getSource().equals(saveFile))
 		{
@@ -96,6 +95,39 @@ public class TuringGUI extends JFrame implements GUI, ActionListener {
 		else if(e.getSource().equals(centerView))
 		{
 			new CenterViewDialog(this);
+		}
+		else if(e.getSource().equals(help))
+		{
+			showHelp();
+		}
+		else if(e.getSource().equals(about))
+		{
+			new AboutFrame();
+		}
+	}
+
+	private void showHelp()
+	{
+		String operatingSystem = System.getProperty("os.name");
+		Runtime rt = Runtime.getRuntime();
+		
+		if(operatingSystem.startsWith("Windows"))
+		{
+			try
+			{
+				rt.exec("rundll32 url.dll,FileProtocolHandler " + GUI.HELP_LOCATION.toString());
+			}
+			catch (IOException ex)
+			{
+				Main.err.displayError(ex);
+			}
+		}
+		else
+		{
+			JOptionPane.showMessageDialog(this, "It looks like you're using "+operatingSystem+".\n" +
+												"This software can only open the help page by itself in Windows.\n" +
+												"Please point your browser at:\n"+
+												GUI.HELP_LOCATION);
 		}
 	}
 
@@ -156,35 +188,57 @@ public class TuringGUI extends JFrame implements GUI, ActionListener {
 		
 		menuBar = new JMenuBar();
 			fileMenu = new JMenu("File");
+			fileMenu.setMnemonic(KeyEvent.VK_F);
 			menuBar.add(fileMenu);
 				newFile = new JMenuItem("New");
 				newFile.addActionListener(this);
+				newFile.setMnemonic(KeyEvent.VK_N);
 				fileMenu.add(newFile);
 				
 				openFile = new JMenuItem("Open...");
+				openFile.setMnemonic(KeyEvent.VK_O);
 				openFile.addActionListener(this);
 				fileMenu.add(openFile);
 				
 				saveFile = new JMenuItem("Save...");
+				saveFile.setMnemonic(KeyEvent.VK_S);
 				saveFile.addActionListener(this);
 				fileMenu.add(saveFile);
 				
 				importMenu = new JMenu("Import");
+				importMenu.setMnemonic(KeyEvent.VK_I);
 				fileMenu.add(importMenu);
 				
-					import1DFile = new JMenuItem("One-Dimensional Turing Machine...");
+					import1DFile = new JMenuItem("1D Turing Machine...");
+					import1DFile.setMnemonic(KeyEvent.VK_1);
 					import1DFile.addActionListener(this);
 					importMenu.add(import1DFile);
 					
-					import2DFile = new JMenuItem("Two-Dimensional Turing Machine...");
+					import2DFile = new JMenuItem("2D Turing Machine...");
+					import2DFile.setMnemonic(KeyEvent.VK_2);
 					import2DFile.addActionListener(this);
 					importMenu.add(import2DFile);
 					
 			viewMenu = new JMenu("View");
+			viewMenu.setMnemonic(KeyEvent.VK_V);
 			menuBar.add(viewMenu);
 				centerView = new JMenuItem("Center View On...");
+				centerView.setMnemonic(KeyEvent.VK_C);
 				centerView.addActionListener(this);
 				viewMenu.add(centerView);
+				
+			helpMenu = new JMenu("Help");
+			helpMenu.setMnemonic(KeyEvent.VK_F1);
+			menuBar.add(helpMenu);
+				help = new JMenuItem("Help");
+				help.setMnemonic(KeyEvent.VK_H);
+				help.addActionListener(this);
+				helpMenu.add(help);
+				
+				about = new JMenuItem("About...");
+				about.setMnemonic(KeyEvent.VK_A);
+				about.addActionListener(this);
+				helpMenu.add(about);
 				
 			
 			gc.fill=GridBagConstraints.BOTH;
@@ -268,7 +322,10 @@ public class TuringGUI extends JFrame implements GUI, ActionListener {
 
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		this.setTitle("Baby's First Turing Machine");
+		this.setTitle(GUI.TITLE);
+		
+		ImageIcon icon = new ImageIcon(this.getClass().getResource("img/icon.png"));
+		this.setIconImage(icon.getImage());
 	}
 
 	@Override
@@ -280,10 +337,11 @@ public class TuringGUI extends JFrame implements GUI, ActionListener {
 	}
 	
 	@Override
-	public void setCenterTapeViewportOn(int x, int y)
+	public void setTapeViewportCenterTo(int x, int y)
 	{
 		tape.setFollowTapeHead(false);
 		tape.centerViewportOn(x,y);
+		updateStatusMessage("View centered on ("+x+","+y+")");
 		tape.update();
 	}
 	
@@ -385,5 +443,11 @@ public class TuringGUI extends JFrame implements GUI, ActionListener {
 	public void updateTapeDisplayCoordinates(int tapeBeginRowIndex, int tapeEndRowIndex, int tapeBeginColumnIndex, int tapeEndColumnIndex)
 	{
 		status.updateTapeDisplayCoordinatess(tapeBeginRowIndex, tapeEndRowIndex, tapeBeginColumnIndex, tapeEndColumnIndex);
+	}
+
+	@Override
+	public void setCurrentFileName(String filename)
+	{
+		this.setTitle(GUI.TITLE+" - "+filename);
 	}
 }

@@ -36,18 +36,21 @@ public interface GUI {
 	public static final Color SELECTED_COLOR = new Color(169,196,255);
 
 	public static final Color SIDE_PANEL_BACKGROUND = new Color(245,245,245);
+
+	public static final String TITLE = "Baby's First Turing Machine";
+
+	public static final String HELP_LOCATION = "http://ayrtonmassey.github.com/Turing-Simulator/";
 	
 	public boolean debugMode();
 
 	/**
-	 * Returns the Simulator for the Turing machine simulator.
-	 * @return a {@link Simulator}
+	 * @return the {@link Simulator} for the Turing machine simulator.
 	 */
 	public Simulator getSimulator();
 
 	public void reset();
 
-	public void setCenterTapeViewportOn(int x, int y);
+	public void setTapeViewportCenterTo(int x, int y);
 	
 	/**
 	 * Updates the GUI to the current state of the Turing machine.
@@ -60,4 +63,6 @@ public interface GUI {
 	public void updateStatusMessage(String message);
 
 	public void updateTapeDisplayCoordinates(int tapeBeginRowIndex, int tapeEndRowIndex, int tapeBeginColumnIndex, int tapeEndColumnIndex);
+	
+	public void setCurrentFileName(String filename);
 }

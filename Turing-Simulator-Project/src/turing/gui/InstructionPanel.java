@@ -167,6 +167,8 @@ public class InstructionPanel extends JPanel implements ActionListener {
 		Instruction i = instructionFromQuintuplet(quintuplet);
 		
 		listModel.addElement(i);
+		
+		gui.updateStatusMessage("Instruction added successfully!");
 	}
 	
 	private void removeInstruction(int index)
@@ -177,6 +179,7 @@ public class InstructionPanel extends JPanel implements ActionListener {
 										"Remove?", JOptionPane.OK_CANCEL_OPTION)==JOptionPane.OK_OPTION)
 			{
 				listModel.removeElement(index);
+				gui.updateStatusMessage("Instruction removed successfully!");
 			}
 		}
 		else
@@ -218,6 +221,8 @@ public class InstructionPanel extends JPanel implements ActionListener {
 		i = instructionFromQuintuplet(quintuplet);
 		
 		listModel.setElementAt(index,i);
+		
+		gui.updateStatusMessage("Instruction edited successfully!");
 	}
 	
 	public Instruction instructionFromQuintuplet(String quintuplet) throws TuringException

@@ -203,6 +203,7 @@ public class TestSimulator implements Simulator {
 	public boolean pause()
 	{
 		paused=true;
+		gui.updateStatusMessage("Simulation paused.");
 		return true;
 	}
 
@@ -210,6 +211,7 @@ public class TestSimulator implements Simulator {
 	public boolean play()
 	{
 		paused=false;
+		gui.updateStatusMessage("Simulation resumed.");
 		return true;
 	}
 	
