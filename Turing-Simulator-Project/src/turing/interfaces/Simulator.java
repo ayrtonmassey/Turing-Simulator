@@ -88,4 +88,30 @@ public interface Simulator {
 	 * Executes a single instruction while paused.
 	 */
 	public void step();
+
+	/**
+	 * @return the current instruction set, or an empty list if there are no instructions.
+	 */
+	public List<Instruction> getInstructionSet();
+
+	/**
+	 * Returns a new instruction, using this simulator's implementation.
+	 * @param currentState The current state for the instruction.
+	 * @param inputSymbol The input symbol for the instruction.
+	 * @param nextState The next state for the instruction.
+	 * @param outputSymbol The output symbol for the instruction.
+	 * @param direction The direction for the instruction.
+	 * @return A new Instruction.
+	 * @throws TuringException if the instruction is not valid for this Turing machine.
+	 */
+	public Instruction createInstruction(int currentState, char inputSymbol, int nextState, char outputSymbol, int direction) throws TuringException;
+
+	/**
+	 * Sets the simulator's instruction set to a new instruction set.
+	 * <p>
+	 * This method's body will be called by the GUI thread, so it should be synchronized on the simulator's
+	 * instruction set.
+	 * @param instructionSet The new instruction set.
+	 */
+	public void setInstructionSet(List<Instruction> instructionSet);
 }

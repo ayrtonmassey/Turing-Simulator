@@ -21,57 +21,33 @@ import turing.interfaces.GUI;
 import turing.interfaces.Simulator;
 
 public class TuringGUI extends JFrame implements GUI, ActionListener {
-
-	private class TuringFileFilter extends FileFilter {
-
-		@Override
-		public boolean accept(File f)
-		{
-			if(f.getName().endsWith(Simulator.FILE_EXTENSION) || f.isDirectory())
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
-
-		@Override
-		public String getDescription()
-		{
-			return "Turing Simulator Files (.tsf)";
-		}
-		
-	}
 	
 	private boolean DEBUG = false;
 	
 	Simulator sim;
-	int TAPE_ROWS_TO_DISPLAY = GUI.DEFAULT_NUM_ROWS;
 	
+	int TAPE_ROWS_TO_DISPLAY = GUI.DEFAULT_NUM_ROWS;
 	int TAPE_COLUMNS_TO_DISPLAY = GUI.DEFAULT_NUM_COLUMNS;
+	
 	int currentState;
 	
 	int tapeHeadColumnIndex;
+	
 	TapePanel tape;
-	InstructionPanel instruction;
 	ControlPanel control;
+	SidePanel side;
 	StatusPanel status;
 	
-	NavigationPanel navigation;
-		JMenuBar menuBar;
-			JMenu fileMenu;
+	JMenuBar menuBar;
+		JMenu fileMenu;
 			JMenuItem newFile;
 			JMenuItem openFile;
 			JMenuItem saveFile;
-				JMenu importMenu;
+			JMenu importMenu;
 				JMenuItem import1DFile;
-		JMenuItem import2DFile;
-			JMenu viewMenu;
-		
-	
-	JMenuItem centerView;
+				JMenuItem import2DFile;
+		JMenu viewMenu;
+			JMenuItem centerView;
 	
 	/**
 	 * Creates a new GUI for the Turing machine simulator.
@@ -211,7 +187,7 @@ public class TuringGUI extends JFrame implements GUI, ActionListener {
 				viewMenu.add(centerView);
 				
 			
-			gc.fill=GridBagConstraints.HORIZONTAL;
+			gc.fill=GridBagConstraints.BOTH;
 			gc.gridx=0;
 			gc.gridy=0;
 			gc.gridwidth=4;
@@ -220,17 +196,6 @@ public class TuringGUI extends JFrame implements GUI, ActionListener {
 			gc.weighty=0;
 			gc.anchor=GridBagConstraints.NORTH;
 		this.add(menuBar,gc);	
-			
-		instruction = new InstructionPanel(this);
-			gc.fill=GridBagConstraints.NONE;
-			gc.gridx=3;
-			gc.gridy=1;
-			gc.gridwidth=1;
-			gc.gridheight=1;
-			gc.weightx=0;
-			gc.weighty=1;
-			gc.anchor=GridBagConstraints.NORTH;
-		this.add(instruction,gc);
 		
 		if(this.getSimulator().getTape().getTapeDimension()==Simulator.ONE_DIMENSIONAL)
 		{
@@ -263,6 +228,17 @@ public class TuringGUI extends JFrame implements GUI, ActionListener {
 			gc.anchor=GridBagConstraints.SOUTH;
 		this.add(control,gc);
 		
+		side = new SidePanel(this,tape);
+			gc.fill=GridBagConstraints.VERTICAL;
+			gc.gridx=3;
+			gc.gridy=1;
+			gc.gridwidth=1;
+			gc.gridheight=4;
+			gc.weightx=0;
+			gc.weighty=1;
+			gc.anchor=GridBagConstraints.SOUTH;
+		this.add(side,gc);
+		
 		status = new StatusPanel(this);
 			gc.fill=GridBagConstraints.HORIZONTAL;
 			gc.gridx=0;
@@ -273,17 +249,6 @@ public class TuringGUI extends JFrame implements GUI, ActionListener {
 			gc.weighty=0;
 			gc.anchor=GridBagConstraints.SOUTH;
 		this.add(status,gc);
-		
-		navigation = new NavigationPanel(this,tape);
-			gc.fill=GridBagConstraints.NONE;
-			gc.gridx=3;
-			gc.gridy=3;
-			gc.gridwidth=1;
-			gc.gridheight=1;
-			gc.weightx=0;
-			gc.weighty=0;
-			gc.anchor=GridBagConstraints.SOUTH;
-		this.add(navigation,gc);
 		
 		this.updateStatusMessage("New File Created!");
 		status.updateTapeHeadCoordinates(sim.getTape().getTapeHeadX(), sim.getTape().getTapeHeadY());
@@ -296,7 +261,7 @@ public class TuringGUI extends JFrame implements GUI, ActionListener {
 	private void initFrame()
 	{
 		int w = 800;
-		int h = 600;
+		int h = 740;
 		this.setMinimumSize(	new Dimension(w,h));
 		this.setPreferredSize(	new Dimension(w,h));
 		this.setMaximumSize(	new Dimension(w,h));
@@ -374,13 +339,34 @@ public class TuringGUI extends JFrame implements GUI, ActionListener {
 			}
 		}
 	}
+	
+	private class TuringFileFilter extends FileFilter {
+
+		@Override
+		public boolean accept(File f)
+		{
+			if(f.getName().endsWith(Simulator.FILE_EXTENSION) || f.isDirectory())
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+
+		@Override
+		public String getDescription()
+		{
+			return "Turing Simulator Files (.tsf)";
+		}
+		
+	}
 
 	@Override
 	public void update()
 	{
 		tape.update();
-		
-		instruction.update();
 		
 		control.update();
 		

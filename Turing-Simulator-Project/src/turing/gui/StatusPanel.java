@@ -78,9 +78,9 @@ public class StatusPanel extends JPanel {
 		tapeDisplayCoordinates.setText("Tape Viewport: ("+beginColumnIndex+","+beginRowIndex+") to ("+endColumnIndex+","+endRowIndex+")");
 	}
 	
-	public void updateTapeHeadCoordinates(int row,int col)
+	public void updateTapeHeadCoordinates(int x,int y)
 	{
-		tapeHeadCoordinates.setText("Tape Head: ("+col+","+row+")");
+		tapeHeadCoordinates.setText("Tape Head: ("+x+","+y+")");
 	}
 	
 }

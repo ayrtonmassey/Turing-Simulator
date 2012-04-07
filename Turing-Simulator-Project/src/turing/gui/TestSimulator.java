@@ -62,6 +62,12 @@ public class TestSimulator implements Simulator {
 			//Move the tape head
 			switch(currentInstruction.getDirection())
 			{
+			case Instruction.MOVE_UP:
+				tape.setTapeHeadY(tape.getTapeHeadY()-1);
+				break;
+			case Instruction.MOVE_DOWN:
+				tape.setTapeHeadY(tape.getTapeHeadY()+1);
+				break;
 			case Instruction.MOVE_LEFT:
 				tape.setTapeHeadX(tape.getTapeHeadX()-1);
 				break;
@@ -69,7 +75,7 @@ public class TestSimulator implements Simulator {
 				tape.setTapeHeadX(tape.getTapeHeadX()+1);
 				break;
 			default:
-				System.out.println("ERROR!");
+				this.pause();
 				break;
 			}
 		}
@@ -103,7 +109,6 @@ public class TestSimulator implements Simulator {
     @Override
 	public int getCurrentState()
 	{
-		//TODO: FILL THIS IN
 		return currentState;
 	}
 
@@ -204,10 +209,6 @@ public class TestSimulator implements Simulator {
 	@Override
 	public boolean play()
 	{
-		synchronized(this)
-		{
-			notifyAll();
-		}
 		paused=false;
 		return true;
 	}
@@ -309,5 +310,26 @@ public class TestSimulator implements Simulator {
 		tape.print();
 		
 		System.out.println("\nTape Origin: ("+tape.getTapeOriginX()+","+tape.getTapeOriginY()+") Value: "+tape.getTapeSymbolAt(0, 0));
+	}
+
+	@Override
+	public List<Instruction> getInstructionSet()
+	{
+		return instructionSet;
+	}
+
+	@Override
+	public Instruction createInstruction(int currentState, char inputSymbol, int nextState, char outputSymbol, int direction) throws TuringException
+	{
+		return new TuringInstruction(currentState,inputSymbol,nextState,outputSymbol,direction);
+	}
+
+	@Override
+	public void setInstructionSet(List<Instruction> instructionSet)
+	{
+		synchronized(this.instructionSet)
+		{
+			this.instructionSet = instructionSet;
+		}
 	}
 }
