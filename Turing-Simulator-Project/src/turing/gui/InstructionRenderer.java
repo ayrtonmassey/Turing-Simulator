@@ -79,6 +79,10 @@ public class InstructionRenderer extends JComponent implements ListCellRenderer 
 			{
 				instructionWidth+=GUI.INSTRUCTION_FONT.getSize()*18/8;
 			}
+			else if(direction.equals("↑") || direction.equals("↓"))
+			{
+				instructionWidth+=GUI.INSTRUCTION_FONT.getSize()*17/8;
+			}
 			else
 			{
 				instructionWidth+=GUI.INSTRUCTION_FONT.getSize()*20/8;

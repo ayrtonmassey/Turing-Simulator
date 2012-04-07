@@ -332,4 +332,17 @@ public class TestSimulator implements Simulator {
 			this.instructionSet = instructionSet;
 		}
 	}
+
+	@Override
+	public void setCurrentState(int state) throws TuringException
+	{
+		if(state>=0)
+		{
+			this.currentState=state;
+		}
+		else
+		{
+			throw new TuringException("The state "+state+" is not a valid state for this Turing simulator.");
+		}
+	}
 }

@@ -6,23 +6,34 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Point;
 import java.awt.Polygon;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
 
 import javax.swing.BorderFactory;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 
+import turing.Main;
+import turing.TuringException;
 import turing.interfaces.GUI;
 
-public class TapePanel extends JPanel implements ListSelectionListener {
+public class TapePanel extends JPanel implements ListSelectionListener, ActionListener {
 
 	public static final int DIRECTION_UP = 0,DIRECTION_DOWN=1,DIRECTION_LEFT=2,DIRECTION_RIGHT=3;
 	
@@ -48,6 +59,10 @@ public class TapePanel extends JPanel implements ListSelectionListener {
 	Polygon headArrow;
 
 	boolean followTapeHead=false;
+	
+	JPopupMenu rightClickMenu;
+		JMenuItem setTapeHeadPositionItem;
+		JMenuItem setCurrentStateItem;
 	
 	/**
 	 * Creates a new TapePanel.
@@ -229,6 +244,25 @@ public class TapePanel extends JPanel implements ListSelectionListener {
 	{	
 		///*
 		table = new JTable(new TapeModel(gui,this));
+			table.addMouseListener(new MouseAdapter(){
+				public void mouseClicked(MouseEvent e)
+				{
+					if(SwingUtilities.isLeftMouseButton(e))
+					{
+						rightClickMenu.setVisible(false);
+					}
+					else if(SwingUtilities.isRightMouseButton(e))
+					{
+						Point p = e.getPoint();
+						int column = table.columnAtPoint(p);
+						int row = table.rowAtPoint(p);
+
+						table.changeSelection(row, column, false, false);
+						
+						rightClickMenu.show(table, (int)p.getX(), (int)p.getY());
+					}
+				}
+			});
 		
 			//Cell Editor
 		
@@ -257,7 +291,6 @@ public class TapePanel extends JPanel implements ListSelectionListener {
 			table.setBorder(BorderFactory.createLineBorder(new Color(0,0,0), 1));
 			
 				//Selection Style
-			
 				table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 				table.getSelectionModel().addListSelectionListener(this);
 				table.setSelectionBackground(Color.WHITE);
@@ -279,6 +312,15 @@ public class TapePanel extends JPanel implements ListSelectionListener {
 			gc.weighty=0;
 			gc.anchor=GridBagConstraints.CENTER;
 		this.add(table,gc);
+		
+		rightClickMenu = new JPopupMenu();
+			setTapeHeadPositionItem = new JMenuItem("Move Tape Head");
+			setTapeHeadPositionItem.addActionListener(this);
+			rightClickMenu.add(setTapeHeadPositionItem);
+			
+			setCurrentStateItem = new JMenuItem("Set Current State...");
+			setCurrentStateItem.addActionListener(this);
+			rightClickMenu.add(setCurrentStateItem);
 	}
 
 	public boolean isFollowingTapeHead()
@@ -373,5 +415,41 @@ public class TapePanel extends JPanel implements ListSelectionListener {
 	public void valueChanged(ListSelectionEvent e)
 	{
 		repaint();
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e)
+	{
+		if(e.getSource().equals(setTapeHeadPositionItem))
+		{
+			gui.getSimulator().getTape().setTapeHeadX(tapeBeginColumnIndex+table.getSelectedColumn());
+			gui.getSimulator().getTape().setTapeHeadY(tapeBeginRowIndex+table.getSelectedRow());
+			
+			rightClickMenu.setVisible(false);
+			
+			gui.update();
+		}
+		else if(e.getSource().equals(setCurrentStateItem))
+		{
+			String s = JOptionPane.showInputDialog(this, "Enter the new state:", "Set Current State", JOptionPane.PLAIN_MESSAGE);
+			
+			if(s!=null)
+			{
+				try
+				{
+					int state = Integer.parseInt(s);
+					gui.getSimulator().setCurrentState(state);
+					gui.update();
+				}
+				catch(NumberFormatException ex)
+				{
+					Main.err.displayError(ex);
+				}
+				catch(TuringException ex)
+				{
+					Main.err.displayError(ex);
+				}
+			}
+		}
 	}
 }

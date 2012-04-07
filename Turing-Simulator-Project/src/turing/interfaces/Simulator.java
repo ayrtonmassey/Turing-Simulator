@@ -114,4 +114,11 @@ public interface Simulator {
 	 * @param instructionSet The new instruction set.
 	 */
 	public void setInstructionSet(List<Instruction> instructionSet);
+
+	/**
+	 * Sets the current state of the Turing machine.
+	 * @param state The new state.
+	 * @throws TuringException If the new state is not a valid state.
+	 */
+	public void setCurrentState(int state) throws TuringException;
 }
