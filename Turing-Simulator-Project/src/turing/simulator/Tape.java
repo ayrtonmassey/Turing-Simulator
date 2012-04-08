@@ -239,18 +239,7 @@ public class Tape {
 		
 		return blankRow;
 	}
-	
-	/**
-	 * Prints this tape in a readable format.
-	 */
-	public void print()
-	{
-		for(int i = 0;i<tape.size();i++)
-		{
-			System.out.println(tape.get(i));
-		}
-	}
-	
+
 	/**
 	 * Sets the symbol on the tape at (<code>rowIndex</code>,<code>columnIndex</code>) to <code>symbol</code>.
 	 * <p>
