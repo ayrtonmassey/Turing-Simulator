@@ -68,10 +68,32 @@ public class TuringInstruction implements Instruction {
 	{
 		return direction;
 	}
-
-	public void setDirection(int direction)
+	
+	@Override
+	public String toString()
 	{
-		this.direction = direction;
+		String directionString="";
+		switch(direction)
+		{
+		case Instruction.MOVE_UP:
+			directionString = "U";
+			break;
+		case Instruction.MOVE_DOWN:
+			directionString = "D";
+			break;
+		case Instruction.MOVE_LEFT:
+			directionString = "L";
+			break;
+		case Instruction.MOVE_RIGHT:
+			directionString = "R";
+			break;
+		case Instruction.HALT:
+			directionString = "H";
+			break;
+		default:
+			break;
+		}
+		return "("+currentState+","+inputSymbol+","+nextState+","+outputSymbol+","+directionString+")";
 	}
 
 }

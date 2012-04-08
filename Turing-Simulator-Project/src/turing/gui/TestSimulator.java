@@ -131,15 +131,15 @@ public class TestSimulator implements Simulator {
 		initTestInstructions();
 		
 		System.out.println("INITIAL TAPE:");
-		tape.print();
+		System.out.println(tape);
 	}
 
 	public void initTape(int dimension)
 	{
 		tape = new Tape(dimension,0,0);
 		
-		System.out.println("NEW FILE TAPE:");
-		tape.print();
+		System.out.println("\nNEW TAPE:");
+		System.out.println(tape);
 	}
 
 	public void initTestInstructions()
@@ -149,6 +149,12 @@ public class TestSimulator implements Simulator {
 		
 		instructionSet.add(new TuringInstruction(1,'_',1,'_',Instruction.MOVE_LEFT));
 		instructionSet.add(new TuringInstruction(1,'#',0,'#',Instruction.MOVE_RIGHT));
+		
+		for(Instruction i : instructionSet)
+		{
+			System.out.println(i);
+		}
+		System.out.println();
 	}
 
 	public void initTestTape()
@@ -309,7 +315,7 @@ public class TestSimulator implements Simulator {
 		}
 		
 		System.out.println("\nNEW TAPE:");
-		tape.print();
+		System.out.println(tape);
 		
 		System.out.println("\nTape Origin: ("+tape.getTapeOriginX()+","+tape.getTapeOriginY()+") Value: "+tape.getTapeSymbolAt(0, 0));
 	}

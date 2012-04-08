@@ -381,4 +381,29 @@ public class Tape {
 		}
 	}
 	
+	@Override
+	public String toString()
+	{
+		String tapeString = "";
+		
+		for(int y=0;y<tape.size();y++)
+		{
+			if(y==getTapeHeadY()+getTapeOriginY())
+			{
+				tapeString+=getTapeOriginX()+getTapeHeadX();
+			}
+			
+			tapeString+="!";
+			
+			for(int x=0;x<tape.get(y).size();x++)
+			{
+				tapeString+=tape.get(y).get(x);
+			}
+			
+			tapeString+="\n";
+		}
+		
+		return tapeString;
+	}
+	
 }
