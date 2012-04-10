@@ -40,7 +40,7 @@ public class TuringSimulator implements Simulator {
 
 	private int tapeHeadRowIndex;
 
-       
+       List<Instruction> instructions = new ArrayList<Instruction>();
 
 
         /**
@@ -60,18 +60,18 @@ public class TuringSimulator implements Simulator {
             char currentSymbol =getTapeSymbolAt(tapeHeadRowIndex,tapeHeadColumnIndex);
 
             Instruction toExecute = null;
-            for (Instruction i : instructions) (not looking in Instruction class) {
-                if (i.currentState == currentState && i.inputSymbol == currentSymbol) {
+            for (Instruction i : instructions)  {
+                if (i.getCurrentState() == currentState && i.getInputSymbol() == currentSymbol) {
                     toExecute = i;
                 }
             }
 
             if (toExecute != null) {
 
-                currentState = toExecute.nextState;
-                tape[tapeHeadColumnIndex] = toExecute.outputSymbol;
-                switch (toExecute.direction) {
-                    case Instruction.MOVE_LEFT  (Should be DIRECTION_LEFT):
+                currentState = toExecute.getNextState();
+                tape[tapeHeadColumnIndex] = toExecute.getOutputSymbol();
+                switch (toExecute.getDirection()) {
+                    case Instruction.MOVE_LEFT:
                         tapeHeadColumnIndex--;
                         gui.update();
                         break;

@@ -9,6 +9,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import turing.TuringException;
+import turing.interfaces.Instruction;
 import turing.interfaces.Simulator;
 
 /**
