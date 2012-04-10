@@ -13,21 +13,24 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import turing.interfaces.Simulator;
 
 /**
  *
- * @author Jack & Andrew (though Ayrton's the best)
+ * @author Jack & Andrew !(though Ayrton's the best)
  */
 public class ReadFile
 {
+    Scanner scan = new Scanner(f);
 
-    ReadFile()
+    ReadFile(File f)
     {
-        getInstructionsFromFile();
-        getTapeFromFile();
-    }
-    
-    public List<Character> getInstructionsFromFile()
+       getInstructionsFromFile(File f);
+       getTapeFromFile(File f);
+
+    }   
+
+    public List<Character> getInstructionsFromFile(File f)
     {
      List<Character> instructions = new ArrayList<Character>(); //Fixed by Andrew, your ArrayList only had scope of those brackets
      try                                                        //Hence, wouldn't be understood when asked to be returned.
@@ -47,12 +50,12 @@ public class ReadFile
             Logger.getLogger(ReadFile.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println(ex.getMessage());
         }
-     
+        Tape.setTapeDimension(Simulator.ONE_DIMENSIONAL);    
         return instructions;
      
     }
     
-    public List<Character> getTapeFromFile() //will turn into function at later date
+    public List<Character> getTapeFromFile(File f)
     {
         List<Character> tapeList = new ArrayList<Character>();       
         try
@@ -76,21 +79,20 @@ public class ReadFile
                     tapeList.add(tape.charAt(i));
                 }
             }   
-            
-
-    
+               
         } catch (FileNotFoundException ex)
         {
             System.out.println(ex.toString());
         }
-                
+        Tape.setTapeDimension(Simulator.ONE_DIMENSIONAL);            
         return tapeList;
 
     }
+    
 
     public static void main(String[] args)
     {
-        ReadFile r = new ReadFile();
+        ReadFile r = new ReadFile(File f);
     }
         
 }

@@ -6,7 +6,6 @@ import java.util.EventObject;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.JComponent;
-import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.TableCellEditor;
@@ -22,6 +21,12 @@ public class TapeCellEditor extends AbstractCellEditor implements TableCellEdito
 	GUI gui;
 	TapePanel parent;
 	
+	JComponent component;
+
+	int row;
+	
+	int column;
+	
 	/**
 	 * Creates a new TapeCellEditor.
 	 * @param textField The JTextField to use as the editor component.
@@ -34,11 +39,12 @@ public class TapeCellEditor extends AbstractCellEditor implements TableCellEdito
 		this.gui=gui;
 	}
 
-	JComponent component;
+	@Override
+	public Object getCellEditorValue()
+	{
+		return ((JTextField) component).getText();
+	}
 	
-	int row;
-	int column;
-
 	@Override
 	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column)
 	{
@@ -60,6 +66,19 @@ public class TapeCellEditor extends AbstractCellEditor implements TableCellEdito
 	}
 	
 	@Override
+	public boolean isCellEditable(EventObject anEvent)
+	{
+		if(gui.getSimulator().getTape().isTapeEditable())
+		{
+			if (anEvent instanceof MouseEvent)
+			{
+				return ((MouseEvent) anEvent).getClickCount() >= CLICK_COUNT_TO_START;
+			}
+		}
+		return false;
+	}
+
+	@Override
 	public boolean stopCellEditing()
 	{
 		String sValue = ((JTextField)component).getText();
@@ -77,7 +96,7 @@ public class TapeCellEditor extends AbstractCellEditor implements TableCellEdito
 			
 			try
 			{
-				if(gui.getSimulator().setTapeCellSymbol(cValue, parent.getTapeBeginRowIndex()+row, parent.getTapeBeginColumnIndex()+column))
+				if(gui.getSimulator().getTape().setTapeCellSymbol(cValue, parent.getTapeBeginColumnIndex()+column, parent.getTapeBeginRowIndex()+row))
 				{
 					fireEditingStopped();
 					return true;
@@ -87,25 +106,6 @@ public class TapeCellEditor extends AbstractCellEditor implements TableCellEdito
 			{
 				Main.err.displayError(ex);
 				return false;
-			}
-		}
-		return false;
-	}
-	
-	@Override
-	public Object getCellEditorValue()
-	{
-		return ((JTextField) component).getText();
-	}
-
-	@Override
-	public boolean isCellEditable(EventObject anEvent)
-	{
-		if(gui.getSimulator().isTapeEditable())
-		{
-			if (anEvent instanceof MouseEvent)
-			{
-				return ((MouseEvent) anEvent).getClickCount() >= CLICK_COUNT_TO_START;
 			}
 		}
 		return false;

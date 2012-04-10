@@ -1,135 +1,211 @@
 package turing.gui;
 
-import turing.simulator.TuringInstruction;
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.BorderFactory;
-import javax.swing.JComponent;
+import javax.swing.DefaultListModel;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
 
-import turing.interfaces.Instruction;
+import turing.Main;
+import turing.TuringException;
 import turing.interfaces.GUI;
+import turing.interfaces.Instruction;
+import turing.simulator.TuringInstruction;
 
-public class InstructionPanel extends JComponent {
+public class InstructionPanel extends JPanel implements ActionListener {
 
-	List<Instruction> history = new ArrayList<Instruction>();
-	
 	GUI gui;
 	
-	/**
-	 * Creates a new InstructionPanel.
-	 * @param gui The GUI for the Turing machine simulator.
-	 */
-	InstructionPanel(GUI gui)
+	public InstructionPanel(GUI gui)
 	{
 		this.gui = gui;
 		
 		init();
-		
-		if(gui.debugMode())
-		{
-			this.setOpaque(true);
-			this.setBackground(Color.PINK);
-		}
-		
-		history.add(new TuringInstruction(0,'a',1,'a',TuringInstruction.MOVE_LEFT));
-		history.add(new TuringInstruction(100,'a',89,'a',TuringInstruction.MOVE_LEFT));
-		history.add(new TuringInstruction(923,'d',14,'1',TuringInstruction.MOVE_RIGHT));
-		history.add(new TuringInstruction(1781,'c',2,'8',TuringInstruction.HALT));
 	}
 	
-	/**
-	 * Initialises the style of this component.
-	 */
-	private void init()
-	{
-		int w = GUI.INSTRUCTION_FONT.getSize()*10;
-		int h = GUI.INSTRUCTION_FONT.getSize()*4;
+	JScrollPane scrollPane;
+		JList instructionList;
+			InstructionSetModel listModel;
+	JButton addInstruction;
+		Icon addIcon;
+	JButton removeInstruction;
+		Icon removeIcon;
+	public void init()
+	{			
+		this.setLayout(new GridBagLayout());
+		GridBagConstraints gc = new GridBagConstraints();
 		
-		this.setMinimumSize(new Dimension(	w,h));
-		this.setPreferredSize(new Dimension(w,h));
-		this.setMaximumSize(new Dimension(	w,h));
+		JLabel panelTitle = new JLabel("Instruction Set:");
+			panelTitle.setBorder(BorderFactory.createEmptyBorder(8,0,0,0));
+			panelTitle.setFont(GUI.INSTRUCTION_FONT);
+			panelTitle.setHorizontalAlignment(SwingConstants.CENTER);
+			panelTitle.setHorizontalTextPosition(SwingConstants.CENTER);
+			gc.fill=GridBagConstraints.BOTH;
+			gc.gridx=0;
+			gc.gridy=0;
+			gc.gridwidth=2;
+			gc.gridheight=1;
+			gc.weightx=1;
+			gc.weighty=0;
+			gc.anchor=GridBagConstraints.CENTER;
+		this.add(panelTitle,gc);
+
+		listModel = new InstructionSetModel(gui);
+		instructionList = new JList(listModel);
+			instructionList.addMouseListener(new MouseAdapter(){
+				@Override
+				public void mouseClicked(MouseEvent e)
+				{
+					if(e.getClickCount()>=2)
+					{
+						try
+						{
+							editInstruction(instructionList.getSelectedIndex());
+						}
+						catch (TuringException ex)
+						{
+							Main.err.displayError(ex);
+						}
+					}
+				}
+			});
+			instructionList.setCellRenderer(new InstructionRenderer());
+			instructionList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+			instructionList.setBackground(GUI.SIDE_PANEL_BACKGROUND);
+		scrollPane = new JScrollPane(instructionList);
+			scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+			scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+			scrollPane.setBorder(BorderFactory.createEmptyBorder());
+			scrollPane.setBackground(GUI.SIDE_PANEL_BACKGROUND);
+			
+			gc.fill=GridBagConstraints.BOTH;
+			gc.gridx=0;
+			gc.gridy=1;
+			gc.gridwidth=2;
+			gc.gridheight=1;
+			gc.weightx=1;
+			gc.weighty=1;
+			gc.anchor=GridBagConstraints.NORTH;
+		this.add(scrollPane,gc);
 		
+		addIcon = new ImageIcon(this.getClass().getResource("img/add.png"));
+		
+		addInstruction = new JButton(addIcon);
+			addInstruction.addActionListener(this);
+			
+			gc.fill=GridBagConstraints.BOTH;
+			gc.gridx=0;
+			gc.gridy=2;
+			gc.gridwidth=1;
+			gc.gridheight=1;
+			gc.weightx=0.5;
+			gc.weighty=0;
+			gc.anchor=GridBagConstraints.EAST;
+		this.add(addInstruction,gc);
+		
+		removeIcon = new ImageIcon(this.getClass().getResource("img/remove.png"));
+		
+		removeInstruction = new JButton(removeIcon);
+			removeInstruction.addActionListener(this);
+			
+			gc.fill=GridBagConstraints.BOTH;
+			gc.gridx=1;
+			gc.gridy=2;
+			gc.gridwidth=1;
+			gc.gridheight=1;
+			gc.weightx=0.5;
+			gc.weighty=0;
+			gc.anchor=GridBagConstraints.EAST;
+		this.add(removeInstruction,gc);
+		
+		this.setBorder(GUI.TOP_BORDER);
 		this.setOpaque(true);
-		this.setBackground(Color.white);
-		this.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		this.setBackground(GUI.SIDE_PANEL_BACKGROUND);
 	}
 	
-	/**
-	 * Draws the instruction history to this component.
-	 * @see #drawInstruction(Graphics, Instruction, int)
-	 */
 	@Override
-	public void paintComponent(Graphics g)
+	public void actionPerformed(ActionEvent e)
 	{
-		if(this.isOpaque())
+		if(e.getSource().equals(addInstruction))
 		{
-			g.setColor(this.getBackground());
-			g.fillRect(0,0,this.getWidth(),this.getHeight());
-		}
-		
-		for(int i=history.size()-1, count=0; i>=0 && count<GUI.INSTRUCTIONS_TO_DISPLAY; i--, count++)
-		{
-			drawInstruction(g, history.get(i),count);
-		}
-	}
-	
-	/**
-	 * Updates the instruction display.
-	 */
-	public void update()
-	{
-		Instruction i = gui.getSimulator().getCurrentInstruction();
-		if(i!=null)
-		{
-			history.add(i);
-			if(history.size()>GUI.INSTRUCTION_HISTORY_LIMIT)
+			try
 			{
-				history.remove(0);
+				addInstruction();
 			}
-			repaint();
+			catch (TuringException ex)
+			{
+				Main.err.displayError(ex);
+			}
+		}
+		else if(e.getSource().equals(removeInstruction))
+		{
+			removeInstruction(instructionList.getSelectedIndex());
 		}
 	}
 	
-	int yOffset=GUI.INSTRUCTION_FONT.getSize()/2;
-	int lineOffset=GUI.INSTRUCTION_FONT.getSize()/8;
-	
-	/**
-	 * Draws an quintuplet to the screen in the form (Current State,Input Symbol,Next State,Output Symbol,Direction).
-	 * @param g The {@link Graphics} context to draw to.
-	 * @param i The {@link Instruction} to draw.
-	 * @param count The number of quintuplets which have been drawn below this one.
-	 */
-	private void drawInstruction(Graphics g, Instruction i, int count)
+	private void addInstruction() throws TuringException
 	{
-		int xOffset=0;
-		g.setColor(this.getForeground());
-		Font INSTRUCTION_SUBSCRIPT_FONT = new Font(GUI.INSTRUCTION_FONT.getFamily(),GUI.INSTRUCTION_FONT.getStyle(),GUI.INSTRUCTION_FONT.getSize()*3/4);
-		int y = this.getHeight()-yOffset-(GUI.INSTRUCTION_FONT.getSize()*count)-lineOffset*count+1;
+		String quintuplet = JOptionPane.showInputDialog(this, "Enter the new quintuplet for this instruction:");
 		
-		String currentState = i.getCurrentState()+"";
+		Instruction i = instructionFromQuintuplet(quintuplet);
 		
-		String inputSymbol = i.getInputSymbol()+"";
+		listModel.addElement(i);
 		
-		String nextState = i.getNextState()+"";
+		gui.updateStatusMessage("Instruction added successfully!");
+	}
+	
+	private void removeInstruction(int index)
+	{
+		if(index>=0)
+		{
+			if(JOptionPane.showConfirmDialog(this, "Are you sure you want to remove this instruction? You cannot undo this change.",
+										"Remove?", JOptionPane.OK_CANCEL_OPTION)==JOptionPane.OK_OPTION)
+			{
+				listModel.removeElement(index);
+				gui.updateStatusMessage("Instruction removed successfully!");
+			}
+		}
+		else
+		{
+			JOptionPane.showMessageDialog(this, "You have not selected an instruction to remove.");
+		}
+	}
+	
+	private void editInstruction(int index) throws TuringException
+	{
+		Instruction i = (Instruction) listModel.getElementAt(index);
 		
-		String outputSymbol = i.getOutputSymbol()+"";
-		
-		String direction;
-		
+		String direction="";
 		switch(i.getDirection())
 		{
+		case Instruction.MOVE_UP:
+			direction="U";
+			break;
+		case Instruction.MOVE_DOWN:
+			direction="D";
+			break;
 		case Instruction.MOVE_LEFT:
-			direction="←";
+			direction="L";
 			break;
 		case Instruction.MOVE_RIGHT:
-			direction="→";
+			direction="R";
 			break;
 		case Instruction.HALT:
 			direction="H";
@@ -139,46 +215,57 @@ public class InstructionPanel extends JComponent {
 			break;
 		}
 		
-		int instructionWidth = GUI.INSTRUCTION_FONT.getSize()+
-								(INSTRUCTION_SUBSCRIPT_FONT.getSize()*9/16)*currentState.length()+
-								GUI.INSTRUCTION_FONT.getSize()*15/8+
-								(INSTRUCTION_SUBSCRIPT_FONT.getSize()*9/16)*nextState.length();
+		String instruction = "("+i.getCurrentState()+","+i.getInputSymbol()+","+i.getNextState()+","+i.getOutputSymbol()+","+direction+")";
+		String quintuplet = JOptionPane.showInputDialog(this, "Enter the new quintuplet for this instruction:", instruction);
 		
-		if(direction.equals("H"))
+		i = instructionFromQuintuplet(quintuplet);
+		
+		listModel.setElementAt(index,i);
+		
+		gui.updateStatusMessage("Instruction edited successfully!");
+	}
+	
+	public Instruction instructionFromQuintuplet(String quintuplet) throws TuringException
+	{
+		if(quintuplet.matches(Instruction.QUINTUPLET_REGEX))
 		{
-			instructionWidth+=GUI.INSTRUCTION_FONT.getSize()*18/8;
+			quintuplet = quintuplet.substring(1,quintuplet.length()-1);
+			
+			String[] instructionArray = quintuplet.split(",");
+			
+			int currentState = Integer.parseInt(instructionArray[0]);
+			char inputSymbol = instructionArray[1].charAt(0);
+			int nextState = Integer.parseInt(instructionArray[2]);
+			char outputSymbol = instructionArray[3].charAt(0);
+			char directionChar = instructionArray[4].charAt(0);
+			int direction;
+			switch(directionChar)
+			{
+			case 'U':
+				direction = Instruction.MOVE_UP;
+				break;
+			case 'D':
+				direction = Instruction.MOVE_DOWN;
+				break;
+			case 'L':
+				direction = Instruction.MOVE_LEFT;
+				break;
+			case 'R':
+				direction = Instruction.MOVE_RIGHT;
+				break;
+			case 'H':
+				direction = Instruction.HALT;
+				break;
+			default:
+				direction = -1;
+			}
+			
+			return gui.getSimulator().createInstruction(currentState,inputSymbol,nextState,outputSymbol,direction);
 		}
 		else
 		{
-			instructionWidth+=GUI.INSTRUCTION_FONT.getSize()*20/8;
+			throw new TuringException("Quintuplet "+quintuplet+" is not a valid instruction for this Turing machine simulator.");
 		}
-		
-		//Draw  (S
-		xOffset=(this.getWidth()/2)-(instructionWidth/2);		
-		g.setFont(GUI.INSTRUCTION_FONT);
-		g.drawString("(S", xOffset, y);
-		
-		//Draw current state
-		xOffset+=GUI.INSTRUCTION_FONT.getSize();
-		g.setFont(INSTRUCTION_SUBSCRIPT_FONT);
-		g.drawString(currentState, xOffset, y+(INSTRUCTION_SUBSCRIPT_FONT.getSize()/4));
-		
-		//Draw input symbol
-		xOffset+=(INSTRUCTION_SUBSCRIPT_FONT.getSize()*9/16)*currentState.length();
-		g.setFont(GUI.INSTRUCTION_FONT);
-		g.drawString(","+inputSymbol+",S", xOffset, y);
-		
-		//Draw next state
-		xOffset+=GUI.INSTRUCTION_FONT.getSize()*15/8;
-		g.setFont(INSTRUCTION_SUBSCRIPT_FONT);
-		g.drawString(nextState, xOffset, y+(INSTRUCTION_SUBSCRIPT_FONT.getSize()/4));
-		
-		//Draw
-		xOffset+=(INSTRUCTION_SUBSCRIPT_FONT.getSize()*9/16)*nextState.length();
-		
-		g.setFont(GUI.INSTRUCTION_FONT);
-		
-		g.drawString(","+outputSymbol+","+direction+")", xOffset, y);
 	}
 	
 }
