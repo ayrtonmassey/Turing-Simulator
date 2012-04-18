@@ -6,6 +6,7 @@ package turing.simulator;
 
 
 import java.io.File;
+import java.io.File;
 import java.io.FileNotFoundException;
 
 import java.util.ArrayList;
@@ -13,12 +14,15 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import turing.interfaces.Instruction;
 import turing.interfaces.Simulator;
 
 /**
  *
  * @author Jack & Andrew !(though Ayrton's the best)
  */
+
+
 public class ReadFile
 {
     Scanner scan = new Scanner(f);
@@ -28,12 +32,17 @@ public class ReadFile
        getInstructionsFromFile(File f);
        getTapeFromFile(File f);
 
-    }   
+    }
 
-    public List<Character> getInstructionsFromFile(File f)
+    ReadFile() {
+
+    }
+
+    public List<Instruction> getInstructionsFromFile(File f)
     {
-     List<Character> instructions = new ArrayList<Character>(); //Fixed by Andrew, your ArrayList only had scope of those brackets
+     List<Instruction> instructions = new ArrayList<Instruction>(); //Fixed by Andrew, your ArrayList only had scope of those brackets
      try                                                        //Hence, wouldn't be understood when asked to be returned.
+                                                                // Had to change <Instruction> instead of <Character> in order for my code to work, Alastair.
          
         {
             

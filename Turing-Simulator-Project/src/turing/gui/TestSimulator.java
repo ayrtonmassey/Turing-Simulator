@@ -47,7 +47,7 @@ public class TestSimulator implements Simulator {
 	{
 		try
 		{
-			//Update history
+			
 			history.add(currentInstruction);
 			
 			if(history.size()>Simulator.HISTORY_SIZE_LIMIT)
@@ -55,25 +55,26 @@ public class TestSimulator implements Simulator {
 				history.remove(0);
 			}
 			
-			//Update symbol and state
+			
 			tape.setTapeCellSymbol(currentInstruction.getOutputSymbol(), tape.getTapeHeadX(), tape.getTapeHeadY());
 			currentState = currentInstruction.getNextState();
 			
-			//Move the tape head
+			
 			switch(currentInstruction.getDirection())
 			{
-			case Instruction.MOVE_UP:
-				tape.setTapeHeadY(tape.getTapeHeadY()-1);
-				break;
-			case Instruction.MOVE_DOWN:
-				tape.setTapeHeadY(tape.getTapeHeadY()+1);
-				break;
 			case Instruction.MOVE_LEFT:
 				tape.setTapeHeadX(tape.getTapeHeadX()-1);
 				break;
 			case Instruction.MOVE_RIGHT:
 				tape.setTapeHeadX(tape.getTapeHeadX()+1);
 				break;
+                       case Instruction.MOVE_UP:
+				tape.setTapeHeadY(tape.getTapeHeadY()-1);
+				break;
+			case Instruction.MOVE_DOWN:
+				tape.setTapeHeadY(tape.getTapeHeadY()+1);
+				break;
+			
 			default:
 				this.pause();
 				break;
