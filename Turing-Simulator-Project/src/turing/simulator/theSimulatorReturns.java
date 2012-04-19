@@ -4,6 +4,7 @@
  */
 package turing.simulator;
 
+import java.awt.Component;
 import turing.Main;
 import java.io.File;
 import java.util.ArrayList;
@@ -48,15 +49,7 @@ public class theSimulatorReturns implements Simulator {
     public void run() {
         while (true) {
             if (paused == false) {
-                int x = tape.getTapeHeadX();
-                int y = tape.getTapeHeadY();
-                char currentInputSymbol = tape.getTapeSymbolAt(x, y);
-                currentInstruction=findInstruction(currentState, currentInputSymbol);
-                try {
-                    executeInstruction(currentInstruction);
-                } catch (TuringException ex) {
-                    Logger.getLogger(theSimulatorReturns.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                step();
                 try {
                     Thread.sleep(sleep);
                 } catch (InterruptedException ex) {
@@ -206,23 +199,31 @@ public class theSimulatorReturns implements Simulator {
 
     @Override
     public void step() {
-        getCurrentInstruction();
-        if (currentInstruction != null) {
-            try {
-                executeInstruction(currentInstruction);
-            } catch (TuringException ex) {
-                Logger.getLogger(theSimulatorReturns.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } else {
+     
+                int x = tape.getTapeHeadX();
+                int y = tape.getTapeHeadY();
+                char currentInputSymbol = tape.getTapeSymbolAt(x, y);
+               
+                
+                currentInstruction=findInstruction(currentState, currentInputSymbol);
+                 if(currentInstruction==null)
+                {
+                    JOptionPane.showMessageDialog((Component) gui,"no instruction");
+                    this.pause();
+                   gui.update();
+                }else
+                        {
 
-            paused = true;
-            JOptionPane.showMessageDialog(null, "There is no instruction for current symbol and state.");
-        }
-        gui.update();
-
-
+                try {
+                    executeInstruction(currentInstruction);
+                } catch (TuringException ex) {
+                    Logger.getLogger(theSimulatorReturns.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                    
+                
+                }
     }
-
+        
     public List<Instruction> getInstructionSet() {
 
         return instructionSet;
