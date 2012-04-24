@@ -52,40 +52,6 @@ public class ReadFile
      
     }
     
-    public List<Character> getQuintuplet(File f, ArrayList tapeList)
-    {            
-        List<Character> quintuplet = new ArrayList();
-        try
-        {        
-            Scanner scan = new Scanner(f); //enter whatever file we are using here
-            int numberOfQuintuplets = scan.nextInt();
-            
-            for (int i = 0; i < numberOfQuintuplets; i++)
-            {
-                getTapeFromFile(f);       
-                String quintNo = ("quintuplet" + i); //want to get that as the name of the ArrayList (and returnable) somehow
-                                                     //Would be good if it was possible to return it before the end, too
-                        
-                quintuplet.add(i, tapeList.get(i)); //should be tapeList's 1st/2nd, etc character
-            }
-            
-            for (int i = 0; i < numberOfQuintuplets; i++)
-            {
-                String quintupletNo = ("quintuplet") + i;
-                quintuplet.add(i*5, '1');
-                quintuplet.addAll((i*5), tapeList);
-            }
-            
-            
-            
-            
-        } catch (FileNotFoundException ex)
-        {
-            System.out.println(ex.toString());
-        }
-        return quintuplet;
-    }
-    
     public List<Character> getTapeFromFile(File f)
     {
         List<Character> tapeList = new ArrayList<Character>();       
@@ -121,7 +87,7 @@ public class ReadFile
     }
     
  public static void main(String[] args) {
-        ReadFile r = new ReadFile(File f);
+        ReadFile r = new ReadFile(File f); //to Jack - is this method needed?
     }
    
         
