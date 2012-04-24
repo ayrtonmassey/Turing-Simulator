@@ -1,7 +1,9 @@
 package turing.gui;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import javax.swing.JOptionPane;
 
@@ -202,8 +204,54 @@ public class TestSimulator implements Simulator {
 	public void openFile(File f, int dimension) throws TuringException
 	{
 		this.reset(dimension);
-		this.initTestTape();
-		this.initTestInstructions();
+		
+		if(dimension == Simulator.ONE_DIMENSIONAL)
+		{
+			try
+			{
+				Scanner s = new Scanner(f);
+				
+				int instructionCount = Integer.parseInt(s.nextLine());
+				
+				List<Instruction> instructionSet = new ArrayList<Instruction>();
+				
+				for(int i=0;i<instructionCount;i++)
+				{
+					instructionSet.add(new TuringInstruction(s.nextLine()));
+				}
+				
+				Tape tape = new Tape(Simulator.ONE_DIMENSIONAL);
+				
+				String tapeString = s.nextLine();
+				boolean tapeHeadPosition=false;
+				for(int i=0;i<tapeString.length()-2;i++)
+				{
+					if(tapeString.charAt(i+1)=='<'&&tapeString.charAt(i+3)=='>'&&!tapeHeadPosition)
+					{
+						tapeHeadPosition=true;
+						tape.setTapeCellSymbol(tapeString.charAt(i+2), i, 0);
+						tape.setTapeHeadX(i);
+						tapeString = tapeString.substring(0,i)+tapeString.substring(i+2,tapeString.length());
+					}
+					else
+					{
+						tape.setTapeCellSymbol(tapeString.charAt(i+1), i, 0);
+					}
+				}
+				
+				this.tape=tape;
+				this.instructionSet=instructionSet;
+			}
+			catch (FileNotFoundException ex)
+			{
+				throw new TuringException("Could not find file: "+f.getAbsolutePath());
+			}
+		}
+		else
+		{
+			this.initTestTape();
+			this.initTestInstructions();
+		}
 	}
 	
 	@Override
