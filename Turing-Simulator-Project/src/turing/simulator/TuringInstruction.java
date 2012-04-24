@@ -11,6 +11,9 @@ public class TuringInstruction implements Instruction {
 	private char outputSymbol;
 	private int direction;
 
+    public TuringInstruction() {
+    }
+
 	public TuringInstruction(int currentState,char inputSymbol,int nextState,char outputSymbol,int direction)
 	{
 		this.currentState=currentState;
