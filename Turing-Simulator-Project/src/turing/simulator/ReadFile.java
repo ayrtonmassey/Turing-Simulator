@@ -6,7 +6,6 @@ package turing.simulator;
 
 
 import java.io.File;
-import java.io.File;
 import java.io.FileNotFoundException;
 
 import java.util.ArrayList;
@@ -25,35 +24,24 @@ import turing.interfaces.Simulator;
 
 public class ReadFile
 {
-    Scanner scan = new Scanner(f);
+    
+    Scanner scan = new Scanner(new File (f));
 
     ReadFile(File f)
     {
-       getInstructionsFromFile(File f);
-       getTapeFromFile(File f);
-
+       getInstructionsFromFile(f);
+       getTapeFromFile(f);
     }
 
-    ReadFile() {
-
-    }
 
     public List<Instruction> getInstructionsFromFile(File f)
     {
      List<Instruction> instructions = new ArrayList<Instruction>(); //Fixed by Andrew, your ArrayList only had scope of those brackets
-     try                                                        //Hence, wouldn't be understood when asked to be returned.
+                                                                 //Hence, wouldn't be understood when asked to be returned.
                                                                 // Had to change <Instruction> instead of <Character> in order for my code to work, Alastair.
-         
+       try   
         {
-            
-           Scanner scan = new Scanner(new File("C:\\Users\\Jack\\My Documents\\New Text Document.TXT"));
-
-            
-           instructions.add('a');
-           
-            System.out.println(instructions.get(0));
-           
-             
+           Scanner scan = new Scanner(f));         
         } catch (FileNotFoundException ex)
         {
             Logger.getLogger(ReadFile.class.getName()).log(Level.SEVERE, null, ex);
@@ -64,14 +52,48 @@ public class ReadFile
      
     }
     
+    public List<Character> getQuintuplet(File f, ArrayList tapeList)
+    {            
+        List<Character> quintuplet = new ArrayList();
+        try
+        {        
+            Scanner scan = new Scanner(f); //enter whatever file we are using here
+            int numberOfQuintuplets = scan.nextInt();
+            
+            for (int i = 0; i < numberOfQuintuplets; i++)
+            {
+                getTapeFromFile(f);       
+                String quintNo = ("quintuplet" + i); //want to get that as the name of the ArrayList (and returnable) somehow
+                                                     //Would be good if it was possible to return it before the end, too
+                        
+                quintuplet.add(i, tapeList.get(i)); //should be tapeList's 1st/2nd, etc character
+            }
+            
+            for (int i = 0; i < numberOfQuintuplets; i++)
+            {
+                String quintupletNo = ("quintuplet") + i;
+                quintuplet.add(i*5, '1');
+                quintuplet.addAll((i*5), tapeList);
+            }
+            
+            
+            
+            
+        } catch (FileNotFoundException ex)
+        {
+            System.out.println(ex.toString());
+        }
+        return quintuplet;
+    }
+    
     public List<Character> getTapeFromFile(File f)
     {
         List<Character> tapeList = new ArrayList<Character>();       
         try
         {
-            Scanner scan = new Scanner(new File("")); //enter whatever file we are using here
+            Scanner scan = new Scanner(f); //enter whatever file we are using here
+
             String tape = scan.nextLine();
-     
             
             for (int i = 0; i < tape.length(); i++)
             {
@@ -79,7 +101,7 @@ public class ReadFile
                 
                 if (currentChar == ')') //when one quintuplet ends
                 {
-                    tapeList.add('*'); //splits into quintuplets on the tape
+                    tapeList.add('*'); //splits into quintuplets by asterisks on the tape
                 }
                 
                 if(     currentChar != ',' //commas are used to split up the instructions
@@ -93,15 +115,14 @@ public class ReadFile
         {
             System.out.println(ex.toString());
         }
-        Tape.setTapeDimension(Simulator.ONE_DIMENSIONAL);            
+        
+        Tape.setTapeDimension(Simulator.ONE_DIMENSIONAL);
         return tapeList;
-
     }
     
-
-    public static void main(String[] args)
-    {
+ public static void main(String[] args) {
         ReadFile r = new ReadFile(File f);
     }
+   
         
 }
