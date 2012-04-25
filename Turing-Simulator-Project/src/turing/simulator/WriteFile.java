@@ -22,7 +22,7 @@ public class WriteFile
         {
             pout = new PrintWriter(new FileWriter(f)); //once ReadFile is fixed this should all be fine-diddly-ine
             //pout.println(tapeList.get(1));
-            //To Jack - example printing for an ArrayList
+            //To Jack - above is example printing for an ArrayList
                      
             pout.println(tapeList); //prints full ArrayList to file!
             
