@@ -21,23 +21,7 @@ import turing.interfaces.Simulator;
  */
 public class ReadFile
 {
-
-    ReadFile(File f)
-    {
-        try
-        {
-            Scanner scan = new Scanner(new File(f));
-            
-        } catch (FileNotFoundException e)
-        {
-            System.out.println(e.toString());
-        }
-
-        getInstructionsFromFile(f);
-        getTapeFromFile(f);
-    }
-
-    public List<Instruction> getInstructionsFromFile(File f)
+    public static List<Instruction> getInstructionsFromFile(File f)
     {
         List<Instruction> instructions = new ArrayList<Instruction>(); //Fixed by Andrew, your ArrayList only had scope of those brackets
         //Hence, wouldn't be understood when asked to be returned.
@@ -87,7 +71,7 @@ public class ReadFile
         return instructions; //This will return the list of instructions!
     }
 
-    public Tape getTapeFromFile(File f)
+    public static Tape getTapeFromFile(File f)
     {
     	Tape tape = null; //This is fine.
     	
