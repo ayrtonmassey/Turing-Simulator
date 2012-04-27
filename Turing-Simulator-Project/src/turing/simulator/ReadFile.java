@@ -12,8 +12,8 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import turing.TuringException;
 import turing.interfaces.Instruction;
-import turing.interfaces.Simulator;
 
 /**
  *
@@ -21,7 +21,7 @@ import turing.interfaces.Simulator;
  */
 public class ReadFile
 {
-    public static List<Instruction> getInstructionsFromFile(File f)
+    public static List<Instruction> getInstructionsFromFile(File f) throws TuringException
     {
         List<Instruction> instructions = new ArrayList<Instruction>(); //Fixed by Andrew, your ArrayList only had scope of those brackets
         //Hence, wouldn't be understood when asked to be returned.
@@ -29,39 +29,16 @@ public class ReadFile
         try
         {
             Scanner scan = new Scanner(f); //This is fine.
-            
-            /*
-             * You've made a scanner, but you haven't done anything with it. You need to:
-             * 
-             * 
-             * Read the first line of the file to find out how many instructions there are.
-             * You can use Integer.parseInt(String) to convert a String to an int.     
-             * 
-             * -----
-             * 
-             * Read the next line ( scan.nextLine() ) and store it as a String.
-             * 
-             * --
-             * 
-             * Make a new TuringInstruction from that string, i.e.:
-             * TuringInstruction instruction = new TuringInstruction(YOUR STRING VARIABLE);
-             * 
-             * When you make a new TuringInstruction and pass it a quintuplet (as a String)
-             * the TuringInstruction will parse that quintuplet for you.
-             * 
-             * --
-             * 
-             * Add that TuringInstruction to instructions - your list of Instruction objects.
-             * 
-             * --
-             * 
-             * Repeat this until you've read in all the instructions.
-             * 
-             * =======
-             * 
-             * Finally, return instructions (the List of Instructions).
-             */
-            
+            String firstLine = scan.nextLine();
+            int numberOfInstructions = Integer.parseInt(firstLine);
+           
+             for (int i = 0; i < numberOfInstructions; i++)
+            {
+                String instruct = scan.nextLine();
+                TuringInstruction instruction = new TuringInstruction(instruct); // not sure if this is correct 
+                instructions.add(instruction);
+            }
+           
         } catch (FileNotFoundException ex)
         {
             Logger.getLogger(ReadFile.class.getName()).log(Level.SEVERE, null, ex);
