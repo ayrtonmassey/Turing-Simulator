@@ -14,6 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import turing.TuringException;
 import turing.interfaces.Instruction;
+import turing.interfaces.Simulator;
 
 /**
  *
@@ -21,6 +22,7 @@ import turing.interfaces.Instruction;
  */
 public class ReadFile
 {
+
     public static List<Instruction> getInstructionsFromFile(File f) throws TuringException
     {
         List<Instruction> instructions = new ArrayList<Instruction>(); //Fixed by Andrew, your ArrayList only had scope of those brackets
@@ -30,34 +32,102 @@ public class ReadFile
         {
             Scanner scan = new Scanner(f); //This is fine.
             String firstLine = scan.nextLine();
-            int numberOfInstructions = Integer.parseInt(firstLine);
-           
-             for (int i = 0; i < numberOfInstructions; i++)
+            try
             {
-                String instruct = scan.nextLine();
-                TuringInstruction instruction = new TuringInstruction(instruct); // not sure if this is correct 
-                instructions.add(instruction);
+                int numberOfInstructions = Integer.parseInt(firstLine);
+
+                for (int i = 0; i < numberOfInstructions; i++)
+                {
+                    String instruct = scan.nextLine();
+                    TuringInstruction instruction = new TuringInstruction(instruct);
+                    instructions.add(instruction);
+                }
+            } catch (NumberFormatException e)
+            {
+                System.out.println("This file is incorrect/corrupt. Please input a file that has a number on the first line.");
             }
-           
+
         } catch (FileNotFoundException ex)
         {
             Logger.getLogger(ReadFile.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println(ex.getMessage());
         }
-        
+
         return instructions; //This will return the list of instructions!
     }
 
     public static Tape getTapeFromFile(File f)
     {
-    	Tape tape = null; //This is fine.
-    	
+        Tape tape = null; //This is fine.
+
         try
         {
             Scanner scan = new Scanner(f); //This is fine.
+            String firstLine = scan.nextLine();
+
+            try
+            {
+                int noOfInstructions = Integer.parseInt(firstLine);
+                String dimensionCheck = null;
+                for (int i = 0; i < noOfInstructions; i++)
+                {
+                    scan.nextLine();
+                    dimensionCheck = scan.nextLine();
+                }
+
+                try
+                {
+                    int dimensions = Integer.parseInt(dimensionCheck);
+                    if (dimensions == 1)
+                    {
+                        tape = new Tape(Simulator.ONE_DIMENSIONAL);
+                    }
+                    if (dimensions == 2)
+                    {
+                        tape = new Tape(Simulator.TWO_DIMENSIONAL);
+                    }
+                } catch (NumberFormatException exep)
+                {
+                    System.out.println("This file is incorrect/corrupt. Please input a file with either 1 or 2 dimensions.");
+                }
+
+                for (int x = 0; scan.hasNextLine(); x++)
+                {
+                    String line = scan.next();
+                    int lineLength = line.length();
+                    String splitter = "";
+                    String[] tapeHeadX = line.split(splitter, 0);
+                    String[] tapeContents = line.split(splitter, 1);
+
+                    if (!tapeHeadX[x].equals(""))
+                    {
+                        int parsedInt = Integer.parseInt(tapeHeadX[x]);
+                        tape.setTapeHeadX(parsedInt);
+                    }
+
+                    for (int y = 0; y < lineLength; y++)
+                    {
+                        char charAtX = tapeContents[x].charAt(x);
+                        try
+                        {
+                            tape.setTapeCellSymbol(charAtX, x, y);
+                        } catch (TuringException ex)
+                        {
+                            System.out.println(ex.toString());
+                        }
+                    }
+                }
+
+            } catch (NumberFormatException e)
+            {
+                System.out.println("This file is incorrect/corrupt. Please input a file that has a number on the first line.");
+            }
+
+
+
 
             //Not sure what you were trying to do here, but I've left it in case you need it.
-            
+
 //	           String tape = scan.nextLine();
 //	            for (int i = 0; i < tape.length(); i++)
 //	            {
@@ -74,7 +144,7 @@ public class ReadFile
 //	                    tapeList.add(tape.charAt(i));
 //	                }
 //	            }
-            
+
             /*
              * This method has to read in the tape from a .tsf file. You'll need to:
              * 
@@ -90,7 +160,7 @@ public class ReadFile
              * The simulator will call this method and set its tape to the Tape object you return
              * in this method.
              */
-            
+
             /*
              * Step by step breakdown:
              * 
@@ -268,8 +338,7 @@ public class ReadFile
              *  Finally, you need to return the tape outside this try/catch block.
              */
 
-        }
-        catch (FileNotFoundException ex)
+        } catch (FileNotFoundException ex)
         {
             System.out.println(ex.toString());
         }
