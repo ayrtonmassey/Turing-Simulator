@@ -21,27 +21,22 @@ public class WriteFile
 {    
     public static void writeFile(File f, Tape tape, List<Instruction> instructions)
     {
-    	//This method is fine now - Ayrton.
-    	
-    	PrintWriter pout = null;
         try
         {
-            pout = new PrintWriter(new FileWriter(f));
+            PrintWriter pout = new PrintWriter(new FileWriter(f));
                 
             pout.println(instructions.size());
             for(int i=0;i<instructions.size();i++)
             {
             	pout.println(instructions.get(i));
             }
+            pout.println(tape.getTapeDimension());
             pout.println(tape);
+            pout.close();
         }
         catch (IOException ex)
         {
             System.out.println(ex.toString());
-        }
-        finally
-        {
-            pout.close();
         }
     }
     

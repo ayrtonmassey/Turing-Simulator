@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import javax.swing.Icon;
@@ -47,9 +48,7 @@ public class TuringGUI extends JFrame implements GUI, ActionListener {
 			JMenuItem newFile;
 			JMenuItem openFile;
 			JMenuItem saveFile;
-			JMenu importMenu;
-				JMenuItem import1DFile;
-				JMenuItem import2DFile;
+			JMenuItem importFile;
 		JMenu viewMenu;
 			JMenuItem centerView;
 		JMenu helpMenu;
@@ -78,15 +77,13 @@ public class TuringGUI extends JFrame implements GUI, ActionListener {
 		}
 		else if(e.getSource().equals(openFile))
 		{
-			showOpenDialog(Simulator.DETECT_TYPE);
+			showOpenDialog();
+			this.reset();
+			this.update();
 		}
-		else if(e.getSource().equals(import1DFile))
+		else if(e.getSource().equals(importFile))
 		{
-			showOpenDialog(Simulator.ONE_DIMENSIONAL);
-		}
-		else if(e.getSource().equals(import2DFile))
-		{
-			showOpenDialog(Simulator.TWO_DIMENSIONAL);
+			showImportDialog();
 		}
 		else if(e.getSource().equals(saveFile))
 		{
@@ -205,19 +202,10 @@ public class TuringGUI extends JFrame implements GUI, ActionListener {
 				saveFile.addActionListener(this);
 				fileMenu.add(saveFile);
 				
-				importMenu = new JMenu("Import");
-				importMenu.setMnemonic(KeyEvent.VK_I);
-				fileMenu.add(importMenu);
-				
-					import1DFile = new JMenuItem("1D Turing Machine...");
-					import1DFile.setMnemonic(KeyEvent.VK_1);
-					import1DFile.addActionListener(this);
-					importMenu.add(import1DFile);
-					
-					import2DFile = new JMenuItem("2D Turing Machine...");
-					import2DFile.setMnemonic(KeyEvent.VK_2);
-					import2DFile.addActionListener(this);
-					importMenu.add(import2DFile);
+				importFile = new JMenuItem("Import...");
+				importFile.setMnemonic(KeyEvent.VK_I);
+				importFile.addActionListener(this);
+				fileMenu.add(importFile);
 					
 			viewMenu = new JMenu("View");
 			viewMenu.setMnemonic(KeyEvent.VK_V);
@@ -345,30 +333,43 @@ public class TuringGUI extends JFrame implements GUI, ActionListener {
 		tape.update();
 	}
 	
-	public void showOpenDialog(int type)
+	public void showOpenDialog()
 	{
 		JFileChooser fc = new JFileChooser();
 		fc.setMultiSelectionEnabled(false);
 		fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-		
-		if(type==Simulator.DETECT_TYPE)
-		{
-			fc.setFileFilter(new TuringFileFilter());
-		}
+
+		fc.setFileFilter(new TuringFileFilter());
 		
 		if(fc.showOpenDialog(this)==JFileChooser.APPROVE_OPTION)
 		{
 			try
 			{
-				sim.openFile(fc.getSelectedFile(),type);
+				sim.openFile(fc.getSelectedFile());
 				this.reset();
 			}
-			catch (TuringException ex)
+			catch(TuringException ex)
+			{
+				Main.err.displayError(ex);
+			}
+			catch(FileNotFoundException ex)
 			{
 				Main.err.displayError(ex);
 			}
 		}
-		
+	}
+	
+	public void showImportDialog()
+	{
+		JFileChooser fc = new JFileChooser();
+		fc.setMultiSelectionEnabled(false);
+		fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+
+		if(fc.showOpenDialog(this)==JFileChooser.APPROVE_OPTION)
+		{
+			sim.importFile(fc.getSelectedFile());
+			this.reset();
+		}
 	}
 	
 	public void showSaveDialog()

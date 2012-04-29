@@ -23,326 +23,165 @@ import turing.interfaces.Simulator;
 public class ReadFile
 {
 
-    public static List<Instruction> getInstructionsFromFile(File f) throws TuringException
+    public static List<Instruction> getInstructionsFromFile(File f) throws TuringException, FileNotFoundException
     {
-        List<Instruction> instructions = new ArrayList<Instruction>(); //Fixed by Andrew, your ArrayList only had scope of those brackets
-        //Hence, wouldn't be understood when asked to be returned.
-        // Had to change <Instruction> instead of <Character> in order for my code to work, Alastair.
-        try
-        {
-            Scanner scan = new Scanner(f); //This is fine.
-            String firstLine = scan.nextLine();
-            try
-            {
-                int numberOfInstructions = Integer.parseInt(firstLine);
+        List<Instruction> instructions = new ArrayList<Instruction>();
 
-                for (int i = 0; i < numberOfInstructions; i++)
-                {
-                    String instruct = scan.nextLine();
-                    TuringInstruction instruction = new TuringInstruction(instruct);
-                    instructions.add(instruction);
-                }
-            } catch (NumberFormatException e)
-            {
-                System.out.println("This file is incorrect/corrupt. Please input a file that has a number on the first line.");
-            }
+        Scanner scan = new Scanner(f);
+        
+    	int instructionCount=0;
+    	try
+    	{
+			instructionCount = Integer.parseInt(scan.nextLine());
+		}
+		catch(NumberFormatException ex)
+		{
+			throw new TuringException("Could not import file: Number of instructions not specified.");
+		}
 
-        } catch (FileNotFoundException ex)
+        for(int i = 0; i<instructionCount; i++)
         {
-            Logger.getLogger(ReadFile.class.getName()).log(Level.SEVERE, null, ex);
-            System.out.println(ex.getMessage());
+            String quintuplet = scan.nextLine();
+            TuringInstruction instruction = new TuringInstruction(quintuplet);
+            instructions.add(instruction);
         }
 
-        return instructions; //This will return the list of instructions!
+        return instructions;
     }
 
-    public static Tape getTapeFromFile(File f)
+    public static Tape getTapeFromFile(File f) throws TuringException, FileNotFoundException
     {
-        Tape tape = null; //This is fine.
+        Tape tape = null;
+
+        Scanner scan = new Scanner(f);
+        
+        int instructionCount=0;
+    	try
+    	{
+			instructionCount = Integer.parseInt(scan.nextLine());
+		}
+		catch(NumberFormatException ex)
+		{
+			throw new TuringException("Could not import file: Number of instructions not specified.");
+		}
+        
+        for (int i=0; i<instructionCount; i++)
+        {
+            scan.nextLine();
+        }
 
         try
         {
-            Scanner scan = new Scanner(f); //This is fine.
-            String firstLine = scan.nextLine();
-
-            try
+            int dimensions = Integer.parseInt(scan.nextLine());
+            if (dimensions == 1)
             {
-                int noOfInstructions = Integer.parseInt(firstLine);
-                String dimensionCheck = null;
-                for (int i = 0; i < noOfInstructions; i++)
-                {
-                    scan.nextLine();
-                    dimensionCheck = scan.nextLine();
-                }
-
-                try
-                {
-                    int dimensions = Integer.parseInt(dimensionCheck);
-                    if (dimensions == 1)
-                    {
-                        tape = new Tape(Simulator.ONE_DIMENSIONAL);
-                    }
-                    if (dimensions == 2)
-                    {
-                        tape = new Tape(Simulator.TWO_DIMENSIONAL);
-                    }
-                } catch (NumberFormatException exep)
-                {
-                    System.out.println("This file is incorrect/corrupt. Please input a file with either 1 or 2 dimensions.");
-                }
-
-                for (int x = 0; scan.hasNextLine(); x++)
-                {
-                    String line = scan.next();
-                    int lineLength = line.length();
-                    String splitter = "";
-                    String[] tapeHeadX = line.split(splitter, 0);
-                    String[] tapeContents = line.split(splitter, 1);
-
-                    if (!tapeHeadX[x].equals(""))
-                    {
-                        int parsedInt = Integer.parseInt(tapeHeadX[x]);
-                        tape.setTapeHeadX(parsedInt);
-                    }
-
-                    for (int y = 0; y < lineLength; y++)
-                    {
-                        char charAtX = tapeContents[x].charAt(x);
-                        try
-                        {
-                            tape.setTapeCellSymbol(charAtX, x, y);
-                        } catch (TuringException ex)
-                        {
-                            System.out.println(ex.toString());
-                        }
-                    }
-                }
-
-            } catch (NumberFormatException e)
-            {
-                System.out.println("This file is incorrect/corrupt. Please input a file that has a number on the first line.");
+                tape = new Tape(Simulator.ONE_DIMENSIONAL);
             }
-
-
-
-
-            //Not sure what you were trying to do here, but I've left it in case you need it.
-
-//	           String tape = scan.nextLine();
-//	            for (int i = 0; i < tape.length(); i++)
-//	            {
-//	                char currentChar = tape.charAt(i); //for convenience
-//	
-//	                if (currentChar == ')') //when one quintuplet ends
-//	                {
-//	                    tapeList.add('*'); //splits into quintuplets by asterisks on the tape
-//	                }
-//	
-//	                if (currentChar != ',' //commas are used to split up the instructions
-//	                        && currentChar != ')')
-//	                {
-//	                    tapeList.add(tape.charAt(i));
-//	                }
-//	            }
-
-            /*
-             * This method has to read in the tape from a .tsf file. You'll need to:
-             * 
-             * - Find the beginning of the tape.
-             * - Read in the dimension of the tape.
-             * - Read in the tape contents, line by line.
-             * - Return the tape.
-             * 
-             * I've written a class called Tape which handles storing the symbols on the tape.
-             * What you need to do is get the symbols on the tape from the file, and pass them
-             * to a new Tape object, then return that tape object.
-             * 
-             * The simulator will call this method and set its tape to the Tape object you return
-             * in this method.
-             */
-
-            /*
-             * Step by step breakdown:
-             * 
-             * -----
-             * 
-             * A .tsf file is composed of the instruction set followed by the tape. In this method, we're reading
-             * in the contents of the tape, so we can ignore the instruction set.
-             * 
-             * To begin, we just need to skip past the lines in the file containing the instruction set.
-             * 
-             * --
-             * 
-             * The nextLine() method of the Scanner class moves to the next line of the file and returns the contents
-             * as a String object.
-             * 
-             * When you call a method which returns a variable, you don't HAVE to store whatever was returned - 
-             * this means we can use nextLine() both to:
-             * 
-             * - get the contents of the next line of a file
-             * - move to the that line of the file
-             * 
-             * If we ignore the String returned by nextLine(), we will just move to the next line.
-             *
-             * --
-             * 
-             * The first line of the .tsf file is the number of instructions in the file.
-             * We need to find out what the number of instructions is, so read the next line of the file using scan.nextLine() and
-             * store it as a String object.
-             * 
-             * You now need to parse the contents of this line as an Integer. (parsing = reading input and converting it to a form
-             * which can be interpreted by the computer).
-             * 
-             * To parse a String as an Integer, you can use Integer.parseInt(String). parseInt(String) returns an int.
-             * 
-             * --
-             * 
-             * We now need to skip past x (the number of instructions) lines in the file. You can use a for loop for this:
-             * 
-             * FOR (0 to x)
-             * 	GO TO NEXT LINE
-             * 
-             * Remember you can use scan.nextLine() to go to the next line in a file.
-             * 
-             * -----
-             * 
-             * If you did all that right, you should now be at the end of the instruction set.
-             * 
-             * The first line after the instruction set in a .tsf file is the dimension of the tape.
-             * 
-             * Read the next line of the file and store it as a String. The dimension will either be stored as
-             * 1 or 2. All you need to do is check if the line equals "1" or "2" (one or two dimensional).
-             * 
-             * If the tape is one-dimensional, make a new Tape like this:
-             * 
-             * tape = new Tape(Simulator.ONE_DIMENSIONAL);
-             * 
-             * Else if it's two-dimensional, make a new Tape like this:
-             * 
-             * tape = new Tape(Simulator.TWO_DIMENSIONAL);
-             * 
-             * -----
-             * 
-             * Now you need to read in the tape contents.
-             * 
-             * In a .tsf file, each row of the tape is on a new line.
-             * Each line begins with an exclamation mark (!) followed by the symbols in that row.
-             * This exclamation mark just signifies the beginning of the symbols on that row.
-             * One line of the tape will have a number before the !. This is the position of the tape head.
-             * 
-             * For example:
-             * 
-             * !111111
-             * !111111
-             * !111111
-             * 4!111101
-             * !111111
-             * 
-             * The first row on the tape is row 0. The first symbol in each row is at column 0. This means that the
-             * top left symbol on the tape (the first symbol on the first row) is at (0,0).
-             * 
-             * rows 0-2 (lines 1-3) are just a bunch of 1s. 
-             * 
-             * On row 3, however, there is a 4 before the !. This means that the x-coordinate of the tape head on
-             * that row is 4.  You'll notice that there's a 0 at (4,3). The tape head will be on this 0 symbol.
-             * 
-             * When you find the row with the position of the tape head, you need to do:
-             * 
-             * tape.setTapeHeadX(int);
-             * tape.setTapeHeadY(int);
-             * 
-             * where Y is the current row and X is the x-coordinate at the start of the line.
-             * 
-             * --
-             * 
-             * For each symbol on a row, use the Tape class' setTapeSymbolAt(char, int, int) method to set
-             * the symbol on the tape.
-             * 
-             * For example, you are on line 3 (row 2 or y=2) and read in an A as the first symbol (column 0 or x=0).
-             * You would do:
-             * 
-             * tape.setTapeSymbolAt('A', 0, 2);
-             * 
-             * --
-             * 
-             * You should use nested for-loops (a for loop inside a for loop) to read in the tape, as in the following
-             * pseudo-code:
-             * 
-             * INT y <- 0;
-             * 
-             * WHILE(SCANNER HAS NEXT LINE)
-             * 
-             * 	   STRING line <- GET NEXT LINE;
-             * 
-             *     STRING tapeHeadX <- SPLIT LINE [0];
-             *     STRING tapeContents <- SPLIT LINE [1];
-             *     
-             *     IF tapeHeadX IS NOT EMPTY
-             *     	PARSE tapeHeadX AS INTEGER
-             *     	SET TAPE HEAD X TO RESULT
-             *     
-             *     INT x <- 0;
-             *     
-             * 	   WHILE(x < LENGTH OF tapeContents)
-             * 		   
-             *         SET TAPE SYMBOL AT (x,y) TO CHAR AT x IN tapeContents;
-             *         
-             *         x <- x+1;
-             *         
-             *     ENDWHILE
-             *     
-             *     y <- y+1;
-             *     
-             * ENDWHILE
-             * 
-             * --
-             * 
-             * I've written the loops above as WHILE loops in pseudocode because I didn't want to give you incorrect
-             * pseudocode. If you implement that code with while loops it should work. Alternatively you can 
-             * (and should) use for-loops. A for-loop is constructed like:
-             * 
-             * for(initialise some variables ; while this condition is true ; do this stuff to these variables)
-             * {
-             *     //DO STUFF
-             * }
-             * 
-             * so in this case you might have:
-             * 
-             * for(int y=0; scan.hasNext(); y++)
-             * {
-             *     //BLAH BLAH DO STUFF
-             *     
-             *     for(int x=0; x < tapeContents.length(); x++)
-             *     {
-             *     
-             *         //BLAH BLAH DO MORE STUFF
-             *     
-             *     }
-             *     
-             * }
-             *         
-             *  You don't need to increment x and y within the loop. This is because anything after the second ; in the for-loop
-             *  statement will be done each time the for loop executes. x++ and y++ are shorthand for x = x+1 (or x+=1) and y = y+1 (or y+=1).
-             *     
-             *  You might be thinking "why do I need for-loops if I can just use a while loop?". The main reason is because
-             *  it makes your code more readable - with a for-loop it's clear that you're iterating over something, whereas
-             *  a while loop can be used for lots of purposes (e.g. requesting user input repeatedly).
-             *  
-             *  (iterating = looping over a set of things and doing something to each of them)
-             *  
-             *  The condition for your for-loop can be ANYTHING which returns a true or false value!
-             *  It doesn't have to relate to the variables you initialised.
-             *  
-             *  ===============
-             *  
-             *  Finally, you need to return the tape outside this try/catch block.
-             */
-
-        } catch (FileNotFoundException ex)
+            else if (dimensions == 2)
+            {
+                tape = new Tape(Simulator.TWO_DIMENSIONAL);
+            }
+        }
+        catch (NumberFormatException ex)
         {
-            System.out.println(ex.toString());
+            throw new TuringException("Failed to open file: Tape dimension not specified.");
         }
 
-        return tape; //This will return the tape!
+        for (int y = 0; scan.hasNextLine(); y++)
+        {
+            String line = scan.nextLine();
+            
+            if(!line.equals(""))
+            {
+	            String splitter = "!";
+	            String tapeHeadX = line.split(splitter, 2)[0];
+	            String tapeContents = line.split(splitter, 2)[1];
+	            
+	            if (!tapeHeadX.equals(""))
+	            {
+	                int parsedInt = Integer.parseInt(tapeHeadX);
+	                tape.setTapeHeadX(parsedInt);
+	                tape.setTapeHeadY(y);
+	            }
+	
+	            for (int x=0; x<tapeContents.length(); x++)
+	            {
+	                tape.setTapeCellSymbol(tapeContents.charAt(x), x, y);
+	            }
+            }
+        }
+
+        return tape;
     }
+
+	public static Tape importTapeFromFile(File f) throws FileNotFoundException, TuringException
+	{
+		Scanner s = new Scanner(f);
+		
+		int instructionCount=0;
+		try
+		{
+			instructionCount = Integer.parseInt(s.nextLine());
+		}
+		catch(NumberFormatException ex)
+		{
+			throw new TuringException("Could not import file: Number of instructions not specified.");
+		}
+		
+		for(int i=0;i<instructionCount;i++)
+		{
+			s.nextLine();
+		}
+		
+		Tape tape = new Tape(Simulator.ONE_DIMENSIONAL);
+		
+		String tapeString = "";
+		while(s.hasNextLine())
+		{
+			tapeString+=s.nextLine();
+		}
+		
+		boolean tapeHeadPosition=false;
+		
+		for(int x=0;x<tapeString.length()-2;x++)
+		{
+			if(tapeString.charAt(x+1)=='<'&&tapeString.charAt(x+3)=='>'&&!tapeHeadPosition)
+			{
+				tapeHeadPosition=true;
+				tape.setTapeCellSymbol(tapeString.charAt(x+2), x, 0);
+				tape.setTapeHeadX(x);
+				tapeString = tapeString.substring(0,x)+tapeString.substring(x+2,tapeString.length());
+			}
+			else
+			{
+				tape.setTapeCellSymbol(tapeString.charAt(x+1), x, 0);
+			}
+		}
+		
+		return tape;
+	}
+	
+	public static List<Instruction> importInstructionsFromFile(File f) throws FileNotFoundException, TuringException
+	{
+		Scanner s = new Scanner(f);
+		
+		int instructionCount=0;
+		try
+		{
+			instructionCount = Integer.parseInt(s.nextLine());
+		}
+		catch(NumberFormatException ex)
+		{
+			throw new TuringException("Could not import file: Number of instructions not specified.");
+		}
+		
+		List<Instruction> instructionSet = new ArrayList<Instruction>();
+		
+		for(int i=0;i<instructionCount;i++)
+		{
+			instructionSet.add(new TuringInstruction(s.nextLine().trim()));
+		}
+		
+		return instructionSet;
+	}
 }

@@ -164,7 +164,7 @@ public class InstructionPanel extends JPanel implements ActionListener {
 	{
 		String quintuplet = JOptionPane.showInputDialog(this, "Enter the new quintuplet for this instruction:");
 		
-		Instruction i = instructionFromQuintuplet(quintuplet);
+		Instruction i = gui.getSimulator().createInstruction(quintuplet);
 		
 		listModel.addElement(i);
 		
@@ -218,54 +218,11 @@ public class InstructionPanel extends JPanel implements ActionListener {
 		String instruction = "("+i.getCurrentState()+","+i.getInputSymbol()+","+i.getNextState()+","+i.getOutputSymbol()+","+direction+")";
 		String quintuplet = JOptionPane.showInputDialog(this, "Enter the new quintuplet for this instruction:", instruction);
 		
-		i = instructionFromQuintuplet(quintuplet);
+		i = gui.getSimulator().createInstruction(quintuplet);
 		
 		listModel.setElementAt(index,i);
 		
 		gui.updateStatusMessage("Instruction edited successfully!");
-	}
-	
-	public Instruction instructionFromQuintuplet(String quintuplet) throws TuringException
-	{
-		if(quintuplet.matches(Instruction.QUINTUPLET_REGEX))
-		{
-			quintuplet = quintuplet.substring(1,quintuplet.length()-1);
-			
-			String[] instructionArray = quintuplet.split(",");
-			
-			int currentState = Integer.parseInt(instructionArray[0]);
-			char inputSymbol = instructionArray[1].charAt(0);
-			int nextState = Integer.parseInt(instructionArray[2]);
-			char outputSymbol = instructionArray[3].charAt(0);
-			char directionChar = instructionArray[4].charAt(0);
-			int direction;
-			switch(directionChar)
-			{
-			case 'U':
-				direction = Instruction.MOVE_UP;
-				break;
-			case 'D':
-				direction = Instruction.MOVE_DOWN;
-				break;
-			case 'L':
-				direction = Instruction.MOVE_LEFT;
-				break;
-			case 'R':
-				direction = Instruction.MOVE_RIGHT;
-				break;
-			case 'H':
-				direction = Instruction.HALT;
-				break;
-			default:
-				direction = -1;
-			}
-			
-			return gui.getSimulator().createInstruction(currentState,inputSymbol,nextState,outputSymbol,direction);
-		}
-		else
-		{
-			throw new TuringException("Quintuplet "+quintuplet+" is not a valid instruction for this Turing machine simulator.");
-		}
 	}
 	
 }

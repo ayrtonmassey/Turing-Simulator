@@ -249,7 +249,7 @@ public class Tape {
 	 * @param rowIndex The row index of the cell to write to.
 	 * @param columnIndex The column index of the cell to write to.
 	 * @return <code>true</code> if the cell was written to successfully, <code>false</code> if not.
-	 * @throws TuringException 
+	 * @throws TuringException if the tape cell could not be set.
 	 */
 	public boolean setTapeCellSymbol(char symbol, int x, int y) throws TuringException
 	{

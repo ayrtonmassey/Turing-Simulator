@@ -16,6 +16,8 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import turing.Main;
+import turing.TuringException;
 import turing.interfaces.GUI;
 import turing.interfaces.Simulator;
 
@@ -69,7 +71,14 @@ public class ControlPanel extends JPanel implements ActionListener,ChangeListene
 		{
 			if(gui.getSimulator().isPaused())
 			{
-				gui.getSimulator().step();
+				try
+				{
+					gui.getSimulator().step();
+				}
+				catch (TuringException ex)
+				{
+					Main.err.displayError(ex);
+				}
 			}
 		}
 	}

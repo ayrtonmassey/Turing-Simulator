@@ -1,5 +1,9 @@
 package turing;
 
+import java.io.File;
+
+import turing.simulator.ReadFile;
+
 public class Main {
 
 	public static ErrorHandler err = new ErrorHandler();
@@ -11,7 +15,7 @@ public class Main {
 	 */
 	public static void main(String[] args)
 	{
-		//For now, do nothing.
+		
 	}
 
 }

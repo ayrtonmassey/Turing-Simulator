@@ -1,6 +1,7 @@
 package turing.interfaces;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.List;
 
 import turing.TuringException;
@@ -47,8 +48,9 @@ public interface Simulator {
 	 * @param f The file to open.
 	 * @param type The dimension of the simulation - <code>Simulator.ONE_DIMENSIONAL</code> for 1D, <code>Simulator.TWO_DIMENSIONAL</code> for 2D.
 	 * @throws TuringException if the open operation failed.
+	 * @throws FileNotFoundException if the file to be opened does not exist.
 	 */
-	public void openFile(File f,int type) throws TuringException;
+	public void openFile(File f) throws TuringException, FileNotFoundException;
 	
 	/**
 	 * Pauses the current simulation.
@@ -87,7 +89,7 @@ public interface Simulator {
 	/*
 	 * Executes a single instruction while paused.
 	 */
-	public void step();
+	public void step() throws TuringException;
 
 	/**
 	 * @return the current instruction set, or an empty list if there are no instructions.
@@ -96,15 +98,11 @@ public interface Simulator {
 
 	/**
 	 * Returns a new instruction, using this simulator's implementation.
-	 * @param currentState The current state for the instruction.
-	 * @param inputSymbol The input symbol for the instruction.
-	 * @param nextState The next state for the instruction.
-	 * @param outputSymbol The output symbol for the instruction.
-	 * @param direction The direction for the instruction.
+	 * @param quintuplet The quintuplet for the new instruction.
 	 * @return A new Instruction.
 	 * @throws TuringException if the instruction is not valid for this Turing machine.
 	 */
-	public Instruction createInstruction(int currentState, char inputSymbol, int nextState, char outputSymbol, int direction) throws TuringException;
+	public Instruction createInstruction(String quintuplet) throws TuringException;
 
 	/**
 	 * Sets the simulator's instruction set to a new instruction set.
@@ -121,4 +119,11 @@ public interface Simulator {
 	 * @throws TuringException If the new state is not a valid state.
 	 */
 	public void setCurrentState(int state) throws TuringException;
+
+	/**
+	 * Imports files in the Heriot-Watt test data format.
+	 * <p>
+	 * @param selectedFile A simulator file in the Heriot-Watt test data format.
+	 */
+	public void importFile(File selectedFile);
 }

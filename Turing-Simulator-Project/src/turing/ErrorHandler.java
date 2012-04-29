@@ -1,5 +1,7 @@
 package turing;
 
+import javax.swing.JOptionPane;
+
 public class ErrorHandler {
 
 	/**
@@ -15,6 +17,8 @@ public class ErrorHandler {
 	public void displayError(Exception ex)
 	{
 		ex.printStackTrace();
+		
+		JOptionPane.showMessageDialog(null, ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
 	}
 	
 }
